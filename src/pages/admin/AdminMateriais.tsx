@@ -67,12 +67,14 @@ export default function AdminMateriais() {
     e.preventDefault();
     if (title && turmaId && fileName) {
       const turma = getTurmaById(turmaId);
+      const fileType = getFileTypeFromName(fileName);
       addMaterial({
         title,
         turmaId,
         professorId: turma?.professorId || '',
-        type: 'pdf',
+        type: fileType === 'video' ? 'video' : fileType === 'pdf' ? 'pdf' : 'file',
         fileName,
+        fileType,
       });
       setTitle('');
       setTurmaId('');
