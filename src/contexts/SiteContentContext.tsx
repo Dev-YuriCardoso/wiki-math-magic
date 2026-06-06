@@ -47,6 +47,8 @@ interface SiteContentContextType {
   content: SiteContent;
   updateContent: (patch: Partial<SiteContent>) => void;
   updateCourse: (key: "games" | "design", patch: Partial<CourseContent>) => void;
+  getText: (id: string, fallback: string) => string;
+  setText: (id: string, value: string) => void;
   resetContent: () => void;
 }
 
