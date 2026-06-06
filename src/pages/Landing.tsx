@@ -331,7 +331,7 @@ function Apresentacao() {
 
       <div className="space-y-16">
         <CourseFeature
-          image={mascotGames}
+          image={courseGames}
           alt="Aluno criando jogos com a Slime Code"
           badge="DESENVOLVIMENTO DE JOGOS"
           age="A partir de 10 anos"
@@ -350,7 +350,7 @@ function Apresentacao() {
 
         <CourseFeature
           reverse
-          image={mascotDesign}
+          image={courseDesign}
           alt="Aluno criando design gráfico com a Slime Code"
           badge="DESIGN GRÁFICO"
           age="A partir de 14 anos"
