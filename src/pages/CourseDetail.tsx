@@ -208,23 +208,21 @@ export default function CourseDetail({ course }: { course: CourseData }) {
             </div>
 
             {modules.map((m, i) => (
-              <Reveal key={m.title} delay={i * 0.05}>
+              <Reveal key={i} delay={i * 0.05}>
                 <div className="slime-card rounded-2xl p-5">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold uppercase">{m.title}</span>
+                    <T as="span" className="text-sm font-bold uppercase" id={`course.${slug}.module.${i}.title`}>{m.title}</T>
                     <ChevronRight className="h-4 w-4 slime-neon" />
                   </div>
-                  <span className="mt-2 inline-block rounded-full border border-[#3ddc84]/40 px-2.5 py-0.5 text-[11px] font-semibold slime-neon">
-                    {m.tag}
-                  </span>
+                  <T as="span" className="mt-2 inline-block rounded-full border border-[#3ddc84]/40 px-2.5 py-0.5 text-[11px] font-semibold slime-neon" id={`course.${slug}.module.${i}.tag`}>{m.tag}</T>
                   <ul className="mt-3 space-y-2">
-                    {m.points.map((p) => (
+                    {m.points.map((p, j) => (
                       <li
-                        key={p}
+                        key={j}
                         className="flex items-start gap-2 text-sm text-white/75"
                       >
                         <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 slime-neon" />
-                        <span>{p}</span>
+                        <T as="span" id={`course.${slug}.module.${i}.point.${j}`}>{p}</T>
                       </li>
                     ))}
                   </ul>
