@@ -400,11 +400,11 @@ function Apresentacao() {
     <section id="apresentacao" className="mx-auto max-w-7xl px-4 py-20 md:px-8">
       <Reveal className="mx-auto mb-14 max-w-2xl text-center">
         <h2 className="text-3xl font-extrabold md:text-4xl">
-          SUA JORNADA COMEÇA AQUI!{" "}
-          <span className="slime-neon">CRIE SEUS JOGOS</span>
+          <T id="apres.title1">SUA JORNADA COMEÇA AQUI! </T>
+          <span className="slime-neon"><T id="apres.title2">CRIE SEUS JOGOS</T></span>
         </h2>
         <p className="mt-4 text-white/70">
-          APRENDA PROGRAMAÇÃO ENQUANTO SE DIVERTE CRIANDO SEUS PRÓPRIOS JOGOS.
+          <T id="apres.subtitle" multiline>APRENDA PROGRAMAÇÃO ENQUANTO SE DIVERTE CRIANDO SEUS PRÓPRIOS JOGOS.</T>
         </p>
       </Reveal>
 
