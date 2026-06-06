@@ -634,8 +634,8 @@ function Footer() {
       <div className="border-b border-[#3ddc84]/20">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-12 text-center md:flex-row md:justify-between md:px-8 md:text-left">
           <h3 className="max-w-md text-2xl font-extrabold">
-            SIGN UP TODAY TO GET THE LATEST{" "}
-            <span className="slime-neon">INSPIRATION</span>
+            <T id="footer.news1">SIGN UP TODAY TO GET THE LATEST </T>
+            <span className="slime-neon"><T id="footer.news2">INSPIRATION</T></span>
           </h3>
           <form
             onSubmit={(e) => e.preventDefault()}
@@ -647,7 +647,7 @@ function Footer() {
               className="slime-input w-full rounded-xl px-4 py-3 text-white placeholder:text-white/40"
             />
             <button className="slime-glow-btn whitespace-nowrap rounded-xl bg-[#3ddc84] px-5 py-3 font-bold text-black">
-              SUBSCRIBE NOW
+              <T id="footer.subscribe">SUBSCRIBE NOW</T>
             </button>
           </form>
         </div>
