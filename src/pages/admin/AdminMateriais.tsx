@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, FileText, Upload, ChevronDown, ChevronRight, Download, Eye } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
+import { getFileTypeFromName } from '@/types/lms';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
