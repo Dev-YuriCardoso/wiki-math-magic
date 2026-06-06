@@ -36,7 +36,7 @@ export default function ProfessorChamada() {
   const dateString = format(selectedDate, 'yyyy-MM-dd');
 
   // Load existing attendance when turma or date changes
-  useMemo(() => {
+  useEffect(() => {
     if (!selectedTurma) return;
     
     const existing = getAttendanceByTurmaAndDate(selectedTurma, dateString);
