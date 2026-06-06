@@ -13,15 +13,26 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
   "PCs Montados",
 ];
 
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: ProductCategory;
   price: number;
+  oldPrice?: number;
   image: string;
   shopeeLink: string;
   whatsappLink?: string;
   description: string;
+  sizes?: string[];
+  colors?: ProductColor[];
+  stock?: number;
+  highlights?: string[];
+  featured?: boolean;
 }
 
 const STORAGE_KEY = "slime_store_products";
