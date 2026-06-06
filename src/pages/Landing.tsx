@@ -59,7 +59,7 @@ const navLinks = [
   { label: "HOME", href: "#home" },
   { label: "CURSOS", href: "#cursos", dropdown: true },
   { label: "APP ALUNOS", href: "/login", isRoute: true },
-  { label: "LOJA", href: "#loja" },
+  { label: "LOJA", href: "/loja", isRoute: true },
   { label: "BLOG", href: "#blog" },
   { label: "CONTATO", href: "#contato" },
 ];
