@@ -5,10 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LMSProvider, useLMS } from "@/contexts/LMSContext";
 import { SiteContentProvider } from "@/contexts/SiteContentContext";
+import { StoreProvider } from "@/contexts/StoreContext";
 
 // Pages
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
+import Loja from "./pages/Loja";
 import CursoDesenvolvimentoJogos from "./pages/CursoDesenvolvimentoJogos";
 import CursoDesignGrafico from "./pages/CursoDesignGrafico";
 import NotFound from "./pages/NotFound";
@@ -60,6 +62,9 @@ function AppRoutes() {
       {/* Landing Page */}
       <Route path="/" element={<Landing />} />
 
+      {/* Store */}
+      <Route path="/loja" element={<Loja />} />
+
       {/* Course Detail Pages */}
       <Route path="/cursos/desenvolvimento-de-jogos" element={<CursoDesenvolvimentoJogos />} />
       <Route path="/cursos/design-grafico" element={<CursoDesignGrafico />} />
@@ -106,9 +111,11 @@ const App = () => (
       <Sonner />
       <LMSProvider>
         <SiteContentProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <StoreProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </StoreProvider>
         </SiteContentProvider>
       </LMSProvider>
     </TooltipProvider>

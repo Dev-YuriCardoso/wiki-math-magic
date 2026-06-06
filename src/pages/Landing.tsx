@@ -59,7 +59,7 @@ const navLinks = [
   { label: "HOME", href: "#home" },
   { label: "CURSOS", href: "#cursos", dropdown: true },
   { label: "APP ALUNOS", href: "/login", isRoute: true },
-  { label: "LOJA", href: "#loja" },
+  { label: "LOJA", href: "/loja", isRoute: true },
   { label: "BLOG", href: "#blog" },
   { label: "CONTATO", href: "#contato" },
 ];
@@ -142,9 +142,9 @@ function Header() {
           <button aria-label="Buscar" className="text-white/80 hover:text-[#39ff14]">
             <Search className="h-5 w-5" />
           </button>
-          <button aria-label="Carrinho" className="text-white/80 hover:text-[#39ff14]">
+          <Link to="/loja" aria-label="Loja" className="text-white/80 hover:text-[#39ff14]">
             <ShoppingBag className="h-5 w-5" />
-          </button>
+          </Link>
           <Link
             to="/login"
             className="slime-glow-btn hidden rounded-xl bg-[#39ff14] px-5 py-2.5 text-sm font-bold text-black sm:inline-flex"
