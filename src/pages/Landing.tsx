@@ -29,8 +29,6 @@ import {
 
 // 🔁 Substitua estas URLs pelas suas próprias imagens depois.
 import heroGraphic from "@/assets/hero-graphic.jpg";
-import mascotDesign from "@/assets/mascot-design.jpg";
-import mascotGames from "@/assets/mascot-games.jpg";
 import courseGames from "@/assets/course-games.jpg";
 import courseDesign from "@/assets/course-design.jpg";
 
