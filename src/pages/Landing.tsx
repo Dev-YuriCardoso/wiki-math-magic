@@ -94,7 +94,30 @@ function Header() {
         {/* Center nav */}
         <nav className="hidden items-center gap-7 lg:flex">
           {navLinks.map((l) =>
-            l.isRoute ? (
+            l.dropdown ? (
+              <div key={l.label} className="group relative">
+                <a
+                  href={l.href}
+                  className="flex items-center gap-1 text-sm font-medium text-white/80 transition-colors hover:text-[#39ff14] group-hover:text-[#39ff14]"
+                >
+                  {l.label}
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </a>
+                <div className="invisible absolute left-1/2 top-full z-50 w-60 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                  <div className="overflow-hidden rounded-2xl border border-[#39ff14]/30 bg-black/95 p-2 shadow-[0_0_30px_rgba(57,255,20,0.15)] backdrop-blur-md">
+                    {courseMenu.map((c) => (
+                      <Link
+                        key={c.to}
+                        to={c.to}
+                        className="block rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-[#39ff14]/10 hover:text-[#39ff14]"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : l.isRoute ? (
               <Link
                 key={l.label}
                 to={l.href}
@@ -109,11 +132,11 @@ function Header() {
                 className="flex items-center gap-1 text-sm font-medium text-white/80 transition-colors hover:text-[#39ff14]"
               >
                 {l.label}
-                {l.dropdown && <ChevronDown className="h-4 w-4" />}
               </a>
             )
           )}
         </nav>
+
 
         {/* Right actions */}
         <div className="flex items-center gap-4">
