@@ -62,7 +62,7 @@ function Reveal({
 }
 
 export default function CourseDetail({ course }: { course: CourseData }) {
-  const { title, banner, age, intro, toolsHeading, tools, modules, Icon } = course;
+  const { slug, title, banner, age, intro, toolsHeading, tools, modules, Icon } = course;
 
   useEffect(() => {
     window.scrollTo(0, 0);
