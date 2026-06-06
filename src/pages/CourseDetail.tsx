@@ -119,7 +119,7 @@ export default function CourseDetail({ course }: { course: CourseData }) {
               </span>
             </h1>
             <span className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-[#3ddc84] px-3 py-1 text-xs font-bold text-black">
-              <Users className="h-3.5 w-3.5" /> {age}
+              <Users className="h-3.5 w-3.5" /> <T id={`course.${slug}.age`}>{age}</T>
             </span>
           </Reveal>
         </div>
