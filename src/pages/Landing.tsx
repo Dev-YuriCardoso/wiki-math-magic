@@ -27,10 +27,9 @@ import {
   Users,
 } from "lucide-react";
 
-// 🔁 Substitua estas URLs pelas suas próprias imagens depois.
-import heroGraphic from "@/assets/hero-graphic.jpg";
-import courseGames from "@/assets/course-games.jpg";
-import courseDesign from "@/assets/course-design.jpg";
+import { useLMS } from "@/contexts/LMSContext";
+import { useSiteContent } from "@/contexts/SiteContentContext";
+import { EditableText, EditableImage, EditableVideo } from "@/components/landing/Editable";
 
 /* ------------------------------ Helpers ------------------------------ */
 
