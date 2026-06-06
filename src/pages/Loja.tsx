@@ -135,7 +135,13 @@ export default function Loja() {
       ) : (
         <>
           {/* Secondary header: search + pills */}
-          <section className="mx-auto max-w-7xl px-4 pt-8 md:px-8">
+          <section id="produtos" className="mx-auto max-w-7xl px-4 pt-10 md:px-8">
+            <div className="mb-5 flex items-center gap-3">
+              <h2 className="text-2xl font-extrabold md:text-3xl">
+                Nossos <span className="slime-neon">Produtos</span>
+              </h2>
+              <span className="h-px flex-1 bg-[#39ff14]/20" />
+            </div>
             <div className="relative mb-6 max-w-md">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40" />
               <input
