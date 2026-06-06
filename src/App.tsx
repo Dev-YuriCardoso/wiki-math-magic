@@ -39,11 +39,11 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
   const { currentUser } = useLMS();
   
   if (!currentUser) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
   
   if (!allowedRoles.includes(currentUser.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
   
   return <>{children}</>;
