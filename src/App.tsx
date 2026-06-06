@@ -62,6 +62,9 @@ function AppRoutes() {
       {/* Landing Page */}
       <Route path="/" element={<Landing />} />
 
+      {/* Store */}
+      <Route path="/loja" element={<Loja />} />
+
       {/* Course Detail Pages */}
       <Route path="/cursos/desenvolvimento-de-jogos" element={<CursoDesenvolvimentoJogos />} />
       <Route path="/cursos/design-grafico" element={<CursoDesignGrafico />} />
