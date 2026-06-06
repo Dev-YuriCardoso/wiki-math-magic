@@ -111,15 +111,15 @@ function UserForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="password">Senha *</Label>
+          <Label htmlFor="password">Senha {isEdit ? '' : '*'}</Label>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              placeholder="••••••••"
-              required
+              placeholder={isEdit ? 'Deixe como está para manter' : '••••••••'}
+              required={!isEdit}
               className="pr-10"
             />
             <button
@@ -142,23 +142,21 @@ function UserForm({
         </div>
       </div>
 
-      {!isEdit && (
-        <div className="space-y-2">
-          <Label htmlFor="role">Papel *</Label>
-          <Select 
-            value={formData.role} 
-            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as UserRole, turmaId: '', turmaIds: [] }))}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="aluno">Aluno</SelectItem>
-              <SelectItem value="professor">Professor</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <div className="space-y-2">
+        <Label htmlFor="role">Papel *</Label>
+        <Select 
+          value={formData.role} 
+          onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as UserRole, turmaId: '', turmaIds: [] }))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="aluno">Aluno</SelectItem>
+            <SelectItem value="professor">Professor</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* Turma selection for students */}
       {formData.role === 'aluno' && (
@@ -483,6 +481,7 @@ export default function AdminUsuarios() {
       email: formData.email,
       password: formData.password,
       cpf: formData.cpf,
+      role: formData.role,
       turmaId: formData.role === 'aluno' ? formData.turmaId : undefined,
       turmaIds: formData.role === 'professor' ? formData.turmaIds : undefined,
       courseStartDate: formData.role === 'aluno' ? formData.courseStartDate : undefined,

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function Login() {
-  const { loginByCredentials } = useLMS();
+  const { loginByCredentials, users } = useLMS();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,23 +42,16 @@ export default function Login() {
       return;
     }
 
-    // Get user role from localStorage to determine redirect
-    const sessionData = localStorage.getItem('lms_data');
-    if (sessionData) {
-      const data = JSON.parse(sessionData);
-      const user = data.users.find((u: { email: string }) => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
-      
-      if (user) {
-        const routes: Record<string, string> = {
-          admin: '/admin',
-          professor: '/professor',
-          aluno: '/aluno',
-        };
-        navigate(routes[user.role] || '/');
-      }
-    }
+    // Determine redirect from in-memory user data (robust, no localStorage re-read)
+    const user = users.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase()
+    );
+    const routes: Record<string, string> = {
+      admin: '/admin',
+      professor: '/professor',
+      aluno: '/aluno',
+    };
+    navigate(user ? routes[user.role] || '/' : '/');
 
     setIsLoading(false);
   };

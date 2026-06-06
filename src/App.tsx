@@ -48,7 +48,7 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
   }
   
   if (!allowedRoles.includes(currentUser.role)) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={`/${currentUser.role}`} replace />;
   }
   
   return <>{children}</>;

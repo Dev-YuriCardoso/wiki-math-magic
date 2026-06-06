@@ -268,11 +268,28 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   };
 
   const updateUser = (id: string, userData: Partial<User>) => {
-    setData(prev => ({
-      ...prev,
-      users: prev.users.map(u => u.id === id ? { ...u, ...userData } : u),
-    }));
-    
+    setData(prev => {
+      const target = prev.users.find(u => u.id === id);
+      const syncTurmas =
+        target?.role === 'professor' && userData.turmaIds !== undefined;
+      const newTurmaIds = userData.turmaIds || [];
+
+      return {
+        ...prev,
+        users: prev.users.map(u => (u.id === id ? { ...u, ...userData } : u)),
+        // Keep turma.professorId in sync with a professor's assigned turmas
+        turmas: syncTurmas
+          ? prev.turmas.map(t => {
+              if (newTurmaIds.includes(t.id)) return { ...t, professorId: id };
+              if (t.professorId === id && !newTurmaIds.includes(t.id)) {
+                return { ...t, professorId: '' };
+              }
+              return t;
+            })
+          : prev.turmas,
+      };
+    });
+
     // Update current user if it's the same user
     if (currentUser?.id === id) {
       setCurrentUser(prev => prev ? { ...prev, ...userData } : null);
@@ -280,12 +297,31 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteUser = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      users: prev.users.filter(u => u.id !== id),
-      payments: prev.payments.filter(p => p.studentId !== id),
-      submissions: prev.submissions.filter(s => s.studentId !== id),
-    }));
+    setData(prev => {
+      const target = prev.users.find(u => u.id === id);
+      const isProfessor = target?.role === 'professor';
+
+      return {
+        ...prev,
+        users: prev.users.filter(u => u.id !== id),
+        // Clean student-related data
+        payments: prev.payments.filter(p => p.studentId !== id),
+        submissions: prev.submissions.filter(s => s.studentId !== id),
+        materialProgress: prev.materialProgress.filter(p => p.studentId !== id),
+        // Remove the deleted student from attendance records
+        attendanceRecords: prev.attendanceRecords.map(r => ({
+          ...r,
+          records: r.records.filter(rec => rec.studentId !== id),
+        })),
+        // If a professor was deleted, unassign their turmas + clean materials authored
+        turmas: isProfessor
+          ? prev.turmas.map(t => (t.professorId === id ? { ...t, professorId: '' } : t))
+          : prev.turmas,
+        materials: isProfessor
+          ? prev.materials.filter(m => m.professorId !== id)
+          : prev.materials,
+      };
+    });
   };
 
   const addTurma = (turmaData: Omit<Turma, 'id' | 'createdAt'>) => {
@@ -294,30 +330,65 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       id: generateId(),
       createdAt: new Date().toISOString(),
     };
-    setData(prev => ({ ...prev, turmas: [...prev.turmas, newTurma] }));
-    
-    // Auto-assign turma to professor
-    const professor = data.users.find(u => u.id === turmaData.professorId);
-    if (professor) {
-      const currentTurmaIds = professor.turmaIds || [];
-      updateUser(professor.id, { turmaIds: [...currentTurmaIds, newTurma.id] });
-    }
+    // Single atomic update: add turma + sync professor's turmaIds (avoids stale reads)
+    setData(prev => ({
+      ...prev,
+      turmas: [...prev.turmas, newTurma],
+      users: prev.users.map(u =>
+        u.id === turmaData.professorId
+          ? { ...u, turmaIds: [...(u.turmaIds || []), newTurma.id] }
+          : u
+      ),
+    }));
   };
 
   const updateTurma = (id: string, turmaData: Partial<Turma>) => {
-    setData(prev => ({
-      ...prev,
-      turmas: prev.turmas.map(t => t.id === id ? { ...t, ...turmaData } : t),
-    }));
+    setData(prev => {
+      const existing = prev.turmas.find(t => t.id === id);
+      const oldProfessorId = existing?.professorId;
+      const newProfessorId = turmaData.professorId;
+      const professorChanged =
+        newProfessorId !== undefined && newProfessorId !== oldProfessorId;
+
+      return {
+        ...prev,
+        turmas: prev.turmas.map(t => (t.id === id ? { ...t, ...turmaData } : t)),
+        users: professorChanged
+          ? prev.users.map(u => {
+              if (u.id === oldProfessorId) {
+                return { ...u, turmaIds: (u.turmaIds || []).filter(tid => tid !== id) };
+              }
+              if (u.id === newProfessorId) {
+                const ids = u.turmaIds || [];
+                return { ...u, turmaIds: ids.includes(id) ? ids : [...ids, id] };
+              }
+              return u;
+            })
+          : prev.users,
+      };
+    });
   };
 
   const deleteTurma = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      turmas: prev.turmas.filter(t => t.id !== id),
-      materials: prev.materials.filter(m => m.turmaId !== id),
-      submissions: prev.submissions.filter(s => s.turmaId !== id),
-    }));
+    setData(prev => {
+      const materialIds = prev.materials.filter(m => m.turmaId === id).map(m => m.id);
+      return {
+        ...prev,
+        turmas: prev.turmas.filter(t => t.id !== id),
+        materials: prev.materials.filter(m => m.turmaId !== id),
+        submissions: prev.submissions.filter(s => s.turmaId !== id),
+        attendanceRecords: prev.attendanceRecords.filter(r => r.turmaId !== id),
+        materialProgress: prev.materialProgress.filter(p => !materialIds.includes(p.materialId)),
+        // Unassign deleted turma from students and professors
+        users: prev.users.map(u => {
+          if (u.turmaId === id) return { ...u, turmaId: undefined };
+          if (u.turmaIds?.includes(id)) {
+            return { ...u, turmaIds: u.turmaIds.filter(tid => tid !== id) };
+          }
+          return u;
+        }),
+      };
+    });
   };
 
   const addMaterial = (materialData: Omit<Material, 'id' | 'uploadedAt'>) => {

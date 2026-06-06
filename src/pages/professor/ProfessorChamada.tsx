@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, Check, X, Save, Users } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
@@ -36,7 +36,7 @@ export default function ProfessorChamada() {
   const dateString = format(selectedDate, 'yyyy-MM-dd');
 
   // Load existing attendance when turma or date changes
-  useMemo(() => {
+  useEffect(() => {
     if (!selectedTurma) return;
     
     const existing = getAttendanceByTurmaAndDate(selectedTurma, dateString);
