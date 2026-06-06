@@ -614,7 +614,7 @@ function Contato() {
             type="submit"
             className="slime-glow-btn w-full rounded-xl bg-[#3ddc84] px-6 py-3.5 font-bold text-black"
           >
-            ENVIAR MENSAGEM
+            <T id="contato.btn">ENVIAR MENSAGEM</T>
           </button>
           {sent && (
             <p className="text-center text-sm slime-neon">
