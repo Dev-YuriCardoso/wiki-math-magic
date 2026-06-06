@@ -343,10 +343,10 @@ function CourseFeature({
         <div className="slime-card rounded-3xl p-6 md:p-8">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#3ddc84]/50 px-3 py-1 text-xs font-semibold slime-neon">
-              {icon} {badge}
+              {icon} <T id={`${courseKey}.badge`}>{badge}</T>
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3ddc84] px-3 py-1 text-xs font-bold text-black">
-              <Users className="h-3.5 w-3.5" /> {age}
+              <Users className="h-3.5 w-3.5" /> <T id={`${courseKey}.age`}>{age}</T>
             </span>
           </div>
 
@@ -374,10 +374,10 @@ function CourseFeature({
           </p>
 
           <ul className="mt-6 space-y-3">
-            {learn.map((item) => (
+            {learn.map((item, i) => (
               <li key={item} className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 slime-neon" />
-                <span>{item}</span>
+                <T id={`${courseKey}.learn.${i}`}>{item}</T>
               </li>
             ))}
           </ul>
@@ -386,7 +386,7 @@ function CourseFeature({
             to={to}
             className="slime-glow-btn mt-7 inline-flex items-center justify-center rounded-xl bg-[#3ddc84] px-7 py-3.5 font-bold text-black"
           >
-            Saiba mais
+            <T id={`${courseKey}.cta`}>Saiba mais</T>
           </Link>
         </div>
       </Reveal>
