@@ -268,11 +268,28 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   };
 
   const updateUser = (id: string, userData: Partial<User>) => {
-    setData(prev => ({
-      ...prev,
-      users: prev.users.map(u => u.id === id ? { ...u, ...userData } : u),
-    }));
-    
+    setData(prev => {
+      const target = prev.users.find(u => u.id === id);
+      const syncTurmas =
+        target?.role === 'professor' && userData.turmaIds !== undefined;
+      const newTurmaIds = userData.turmaIds || [];
+
+      return {
+        ...prev,
+        users: prev.users.map(u => (u.id === id ? { ...u, ...userData } : u)),
+        // Keep turma.professorId in sync with a professor's assigned turmas
+        turmas: syncTurmas
+          ? prev.turmas.map(t => {
+              if (newTurmaIds.includes(t.id)) return { ...t, professorId: id };
+              if (t.professorId === id && !newTurmaIds.includes(t.id)) {
+                return { ...t, professorId: '' };
+              }
+              return t;
+            })
+          : prev.turmas,
+      };
+    });
+
     // Update current user if it's the same user
     if (currentUser?.id === id) {
       setCurrentUser(prev => prev ? { ...prev, ...userData } : null);
