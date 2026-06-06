@@ -296,40 +296,46 @@ function Marquee() {
 
 function CourseFeature({
   reverse,
-  image,
+  courseKey,
   alt,
   badge,
   age,
   icon,
-  title,
-  subtitle,
-  description,
   learn,
   to,
 }: {
   reverse?: boolean;
-  image: string;
+  courseKey: "games" | "design";
   alt: string;
   badge: string;
   age: string;
   icon: ReactNode;
-  title: string;
-  subtitle: string;
-  description: string;
   learn: string[];
   to: string;
 }) {
+  const { currentUser } = useLMS();
+  const { content, updateCourse } = useSiteContent();
+  const canEdit = currentUser?.role === "admin";
+  const course = content[courseKey];
+
   return (
     <div className="grid items-center gap-8 md:grid-cols-2">
       <Reveal className={reverse ? "md:order-2" : ""}>
         <div className="relative">
           <div className="absolute -inset-3 rounded-3xl bg-[#39ff14]/10 blur-2xl" />
-          <img
-            src={image}
+          <EditableImage
+            canEdit={canEdit}
+            src={course.image}
             alt={alt}
-            loading="lazy"
-            className="relative w-full rounded-3xl border border-[#39ff14]/40 object-cover"
-          />
+            onChange={(img) => updateCourse(courseKey, { image: img })}
+          >
+            <img
+              src={course.image}
+              alt={alt}
+              loading="lazy"
+              className="relative w-full rounded-3xl border border-[#39ff14]/40 object-cover"
+            />
+          </EditableImage>
         </div>
       </Reveal>
 
@@ -344,9 +350,28 @@ function CourseFeature({
             </span>
           </div>
 
-          <h3 className="text-2xl font-extrabold md:text-3xl">{title}</h3>
-          <p className="mt-1 font-semibold slime-neon">{subtitle}</p>
-          <p className="mt-4 text-white/70">{description}</p>
+          <h3 className="text-2xl font-extrabold md:text-3xl">
+            <EditableText
+              canEdit={canEdit}
+              value={course.title}
+              onChange={(v) => updateCourse(courseKey, { title: v })}
+            />
+          </h3>
+          <p className="mt-1 font-semibold slime-neon">
+            <EditableText
+              canEdit={canEdit}
+              value={course.subtitle}
+              onChange={(v) => updateCourse(courseKey, { subtitle: v })}
+            />
+          </p>
+          <p className="mt-4 text-white/70">
+            <EditableText
+              canEdit={canEdit}
+              multiline
+              value={course.description}
+              onChange={(v) => updateCourse(courseKey, { description: v })}
+            />
+          </p>
 
           <ul className="mt-6 space-y-3">
             {learn.map((item) => (
@@ -368,6 +393,7 @@ function CourseFeature({
     </div>
   );
 }
+
 
 function Apresentacao() {
   return (
