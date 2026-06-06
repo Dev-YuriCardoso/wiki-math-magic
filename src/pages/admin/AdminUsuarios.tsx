@@ -111,15 +111,15 @@ function UserForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="password">Senha *</Label>
+          <Label htmlFor="password">Senha {isEdit ? '' : '*'}</Label>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              placeholder="••••••••"
-              required
+              placeholder={isEdit ? 'Deixe como está para manter' : '••••••••'}
+              required={!isEdit}
               className="pr-10"
             />
             <button
