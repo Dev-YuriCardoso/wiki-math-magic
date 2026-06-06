@@ -142,23 +142,21 @@ function UserForm({
         </div>
       </div>
 
-      {!isEdit && (
-        <div className="space-y-2">
-          <Label htmlFor="role">Papel *</Label>
-          <Select 
-            value={formData.role} 
-            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as UserRole, turmaId: '', turmaIds: [] }))}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="aluno">Aluno</SelectItem>
-              <SelectItem value="professor">Professor</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <div className="space-y-2">
+        <Label htmlFor="role">Papel *</Label>
+        <Select 
+          value={formData.role} 
+          onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as UserRole, turmaId: '', turmaIds: [] }))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="aluno">Aluno</SelectItem>
+            <SelectItem value="professor">Professor</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* Turma selection for students */}
       {formData.role === 'aluno' && (
