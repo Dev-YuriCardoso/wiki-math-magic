@@ -222,7 +222,7 @@ function Hero() {
     <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24">
       <Reveal>
         <span className="inline-block rounded-full border border-[#3ddc84]/50 px-4 py-1.5 text-xs font-semibold tracking-wide slime-neon">
-          CURSO DE PROGRAMAÇÃO DE JOGOS E DESIGN GRÁFICO
+          <T id="hero.badge">CURSO DE PROGRAMAÇÃO DE JOGOS E DESIGN GRÁFICO</T>
         </span>
         <h1 className="mt-6 text-4xl font-extrabold leading-tight md:text-6xl">
           <EditableText
