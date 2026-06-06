@@ -543,7 +543,7 @@ function Beneficios() {
     <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
       <Reveal className="mb-12 text-center">
         <h2 className="text-3xl font-extrabold md:text-4xl">
-          SOBRE O <span className="slime-neon">CURSO</span>
+          <T id="benef.title1">SOBRE O </T><span className="slime-neon"><T id="benef.title2">CURSO</T></span>
         </h2>
       </Reveal>
       <div className="grid gap-6 md:grid-cols-2">
@@ -552,8 +552,8 @@ function Beneficios() {
             <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-[#3ddc84]/40 slime-neon">
               <Trophy className="h-7 w-7" />
             </span>
-            <h3 className="text-xl font-bold slime-neon">APRENDIZADO PROGRESSIVO</h3>
-            <p className="mt-2 text-white/70">Do básico ao avançado.</p>
+            <h3 className="text-xl font-bold slime-neon"><T id="benef.card1.title">APRENDIZADO PROGRESSIVO</T></h3>
+            <p className="mt-2 text-white/70"><T id="benef.card1.desc" multiline>Do básico ao avançado.</T></p>
           </div>
         </Reveal>
         <Reveal delay={0.1}>
@@ -561,8 +561,8 @@ function Beneficios() {
             <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-[#3ddc84]/40 slime-neon">
               <Target className="h-7 w-7" />
             </span>
-            <h3 className="text-xl font-bold slime-neon">AULAS PRÁTICAS E OBJETIVAS</h3>
-            <p className="mt-2 text-white/70">Aprenda fazendo, com foco no que importa.</p>
+            <h3 className="text-xl font-bold slime-neon"><T id="benef.card2.title">AULAS PRÁTICAS E OBJETIVAS</T></h3>
+            <p className="mt-2 text-white/70"><T id="benef.card2.desc" multiline>Aprenda fazendo, com foco no que importa.</T></p>
           </div>
         </Reveal>
       </div>
