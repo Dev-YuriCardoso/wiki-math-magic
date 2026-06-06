@@ -142,7 +142,7 @@ export function EditableVideo({
             className="h-full w-full"
             src={`https://www.youtube.com/embed/${id}?autoplay=1&rel=0`}
             title="Vídeo de apresentação Slime Code"
-            allow="accelerated-erometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         ) : (
