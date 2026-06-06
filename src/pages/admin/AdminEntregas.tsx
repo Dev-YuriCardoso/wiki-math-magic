@@ -46,14 +46,27 @@ export default function AdminEntregas() {
     setOpenTurmas(newOpen);
   };
 
-  const handleDownload = (fileName: string) => {
-    // Simulate download (in real app would download actual file)
-    const link = document.createElement('a');
-    link.href = '#';
-    link.download = fileName;
-    // Show toast or notification
-    alert(`Download iniciado: ${fileName}`);
+  const handleDownload = (submission: StudentSubmission) => {
+    if (submission.fileData) {
+      const link = document.createElement('a');
+      link.href = submission.fileData;
+      link.download = submission.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      const blob = new Blob([`Conteúdo simulado de ${submission.fileName}`], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = submission.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
   };
+
 
   return (
     <MainLayout title="Entregas dos Alunos">
