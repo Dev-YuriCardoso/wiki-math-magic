@@ -111,9 +111,11 @@ const App = () => (
       <Sonner />
       <LMSProvider>
         <SiteContentProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <StoreProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </StoreProvider>
         </SiteContentProvider>
       </LMSProvider>
     </TooltipProvider>
