@@ -14,10 +14,12 @@ import {
   Code,
   UserCog,
   Megaphone,
-  CalendarCheck
+  CalendarCheck,
+  Palette
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -56,6 +58,7 @@ const alunoNav: NavItem[] = [
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { currentUser, logout } = useLMS();
+  const { theme, toggleTheme } = useTheme();
 
   if (!currentUser) return null;
 
@@ -125,6 +128,17 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </ul>
       </nav>
+
+      {/* Theme toggle */}
+      <div className="px-4 pt-4">
+        <button
+          onClick={toggleTheme}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
+        >
+          <Palette className="h-5 w-5" />
+          {theme === 'cyber' ? 'Tema clássico' : 'Tema cyberpunk'}
+        </button>
+      </div>
 
       {/* Logout */}
       <div className="p-4 border-t border-border">
