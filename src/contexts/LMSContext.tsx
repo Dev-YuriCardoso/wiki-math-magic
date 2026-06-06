@@ -280,12 +280,31 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteUser = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      users: prev.users.filter(u => u.id !== id),
-      payments: prev.payments.filter(p => p.studentId !== id),
-      submissions: prev.submissions.filter(s => s.studentId !== id),
-    }));
+    setData(prev => {
+      const target = prev.users.find(u => u.id === id);
+      const isProfessor = target?.role === 'professor';
+
+      return {
+        ...prev,
+        users: prev.users.filter(u => u.id !== id),
+        // Clean student-related data
+        payments: prev.payments.filter(p => p.studentId !== id),
+        submissions: prev.submissions.filter(s => s.studentId !== id),
+        materialProgress: prev.materialProgress.filter(p => p.studentId !== id),
+        // Remove the deleted student from attendance records
+        attendanceRecords: prev.attendanceRecords.map(r => ({
+          ...r,
+          records: r.records.filter(rec => rec.studentId !== id),
+        })),
+        // If a professor was deleted, unassign their turmas + clean materials authored
+        turmas: isProfessor
+          ? prev.turmas.map(t => (t.professorId === id ? { ...t, professorId: '' } : t))
+          : prev.turmas,
+        materials: isProfessor
+          ? prev.materials.filter(m => m.professorId !== id)
+          : prev.materials,
+      };
+    });
   };
 
   const addTurma = (turmaData: Omit<Turma, 'id' | 'createdAt'>) => {
