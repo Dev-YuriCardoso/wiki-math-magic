@@ -577,10 +577,10 @@ function Contato() {
     <section id="contato" className="mx-auto max-w-3xl px-4 py-20 md:px-8">
       <Reveal className="mb-10 text-center">
         <h2 className="text-3xl font-extrabold md:text-4xl">
-          FALE <span className="slime-neon">CONOSCO</span>
+          <T id="contato.title1">FALE </T><span className="slime-neon"><T id="contato.title2">CONOSCO</T></span>
         </h2>
         <p className="mt-3 text-white/70">
-          Entre em contato para tirar dúvidas ou saber mais sobre o curso.
+          <T id="contato.subtitle" multiline>Entre em contato para tirar dúvidas ou saber mais sobre o curso.</T>
         </p>
       </Reveal>
 
