@@ -535,6 +535,21 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   const getAttendanceByTurmaAndDate = (turmaId: string, date: string) => 
     data.attendanceRecords.find(r => r.turmaId === turmaId && r.date === date);
 
+  const getAttendanceByTurma = (turmaId: string) =>
+    data.attendanceRecords
+      .filter(r => r.turmaId === turmaId)
+      .sort((a, b) => b.date.localeCompare(a.date));
+
+  const getStudentAttendance = (studentId: string) =>
+    data.attendanceRecords
+      .map(r => {
+        const rec = r.records.find(x => x.studentId === studentId);
+        if (!rec) return null;
+        return { date: r.date, present: rec.present, note: rec.note, turmaId: r.turmaId };
+      })
+      .filter((x): x is { date: string; present: boolean; note?: string; turmaId: string } => x !== null)
+      .sort((a, b) => b.date.localeCompare(a.date));
+
   // Progress
   const toggleMaterialProgress = (studentId: string, materialId: string) => {
     const existing = data.materialProgress.find(
