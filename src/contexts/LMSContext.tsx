@@ -617,6 +617,47 @@ export function LMSProvider({ children }: { children: ReactNode }) {
     return data.turmas.filter(t => professor.turmaIds?.includes(t.id));
   };
 
+  // Game time (lan house)
+  const addGameTime = (userId: string, minutes: number, amountPaid: number, note?: string) => {
+    if (minutes <= 0) return;
+    const tx: GameTimeTransaction = {
+      id: generateId(),
+      userId,
+      sellerId: currentUser?.id || '',
+      minutes,
+      amountPaid,
+      note,
+      createdAt: new Date().toISOString(),
+    };
+    setData(prev => ({ ...prev, gameTimeTransactions: [tx, ...prev.gameTimeTransactions] }));
+  };
+
+  const removeGameTime = (userId: string, minutes: number, note?: string) => {
+    if (minutes <= 0) return;
+    const tx: GameTimeTransaction = {
+      id: generateId(),
+      userId,
+      sellerId: currentUser?.id || '',
+      minutes: -Math.abs(minutes),
+      amountPaid: 0,
+      note,
+      createdAt: new Date().toISOString(),
+    };
+    setData(prev => ({ ...prev, gameTimeTransactions: [tx, ...prev.gameTimeTransactions] }));
+  };
+
+  const getUserTimeBalance = (userId: string) =>
+    data.gameTimeTransactions
+      .filter(t => t.userId === userId)
+      .reduce((sum, t) => sum + t.minutes, 0);
+
+  const getUserTimeTransactions = (userId: string) =>
+    data.gameTimeTransactions
+      .filter(t => t.userId === userId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+
+
   return (
     <LMSContext.Provider value={{
       currentUser,
