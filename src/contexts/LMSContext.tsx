@@ -194,6 +194,7 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(DATA_VERSION_KEY, CURRENT_DATA_VERSION.toString());
       localStorage.removeItem(SESSION_KEY);
       setData(initialData);
+      setIsInitialized(true);
       return;
     }
     
@@ -219,6 +220,8 @@ export function LMSProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(SESSION_KEY);
       }
     }
+
+    setIsInitialized(true);
   }, []);
 
   // Save data to localStorage whenever it changes
