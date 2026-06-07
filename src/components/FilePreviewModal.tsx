@@ -78,7 +78,7 @@ export function FilePreviewModal({
 
   const getYouTubeEmbedUrl = (url: string) => {
     const videoId = url.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([\w-]{11})/)?.[1];
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
   };
 
   const getVimeoEmbedUrl = (url: string) => {
