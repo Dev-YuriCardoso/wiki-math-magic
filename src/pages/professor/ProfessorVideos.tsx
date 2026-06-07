@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Plus, Trash2, Video, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Video, Play } from 'lucide-react';
+import { FilePreviewModal } from '@/components/FilePreviewModal';
+import { Material } from '@/types/lms';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
 import { Button } from '@/components/ui/button';
