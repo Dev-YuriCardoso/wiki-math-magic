@@ -76,11 +76,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         ? vendedorNav
         : alunoNav;
 
-  const roleLabels = {
+  const roleLabels: Record<string, string> = {
     admin: 'Administrador',
     professor: 'Professor',
     aluno: 'Aluno',
     vendedor: 'Vendedor',
+    cliente: 'Cliente',
   };
 
   return (
