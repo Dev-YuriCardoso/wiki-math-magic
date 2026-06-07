@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress } from '@/types/lms';
+import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress, GameTimeTransaction } from '@/types/lms';
 
 interface LMSContextType {
   currentUser: User | null;
@@ -47,6 +47,12 @@ interface LMSContextType {
   // Progress
   toggleMaterialProgress: (studentId: string, materialId: string) => void;
   getStudentProgress: (studentId: string) => MaterialProgress[];
+  // Game time (lan house)
+  gameTimeTransactions: GameTimeTransaction[];
+  addGameTime: (userId: string, minutes: number, amountPaid: number, note?: string) => void;
+  removeGameTime: (userId: string, minutes: number, note?: string) => void;
+  getUserTimeBalance: (userId: string) => number;
+  getUserTimeTransactions: (userId: string) => GameTimeTransaction[];
 }
 
 const LMSContext = createContext<LMSContextType | undefined>(undefined);
@@ -54,7 +60,7 @@ const LMSContext = createContext<LMSContextType | undefined>(undefined);
 const STORAGE_KEY = 'lms_data';
 const SESSION_KEY = 'lms_session';
 const DATA_VERSION_KEY = 'lms_data_version';
-const CURRENT_DATA_VERSION = 4; // Increment for new features
+const CURRENT_DATA_VERSION = 5; // Increment for new features
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -76,6 +82,15 @@ const initialData: LMSData = {
       password: 'slimecode@789',
       cpf: '000.000.000-01',
       role: 'admin', 
+      createdAt: '2026-01-01T00:00:00.000Z' 
+    },
+    { 
+      id: 'vendedor-1', 
+      name: 'Vendedor', 
+      email: 'vendas@code.com', 
+      password: 'vendas123',
+      cpf: '000.000.000-02',
+      role: 'vendedor', 
       createdAt: '2026-01-01T00:00:00.000Z' 
     },
     { 
@@ -177,6 +192,7 @@ const initialData: LMSData = {
   ],
   attendanceRecords: [],
   materialProgress: [],
+  gameTimeTransactions: [],
 };
 
 export function LMSProvider({ children }: { children: ReactNode }) {
@@ -601,6 +617,47 @@ export function LMSProvider({ children }: { children: ReactNode }) {
     return data.turmas.filter(t => professor.turmaIds?.includes(t.id));
   };
 
+  // Game time (lan house)
+  const addGameTime = (userId: string, minutes: number, amountPaid: number, note?: string) => {
+    if (minutes <= 0) return;
+    const tx: GameTimeTransaction = {
+      id: generateId(),
+      userId,
+      sellerId: currentUser?.id || '',
+      minutes,
+      amountPaid,
+      note,
+      createdAt: new Date().toISOString(),
+    };
+    setData(prev => ({ ...prev, gameTimeTransactions: [tx, ...prev.gameTimeTransactions] }));
+  };
+
+  const removeGameTime = (userId: string, minutes: number, note?: string) => {
+    if (minutes <= 0) return;
+    const tx: GameTimeTransaction = {
+      id: generateId(),
+      userId,
+      sellerId: currentUser?.id || '',
+      minutes: -Math.abs(minutes),
+      amountPaid: 0,
+      note,
+      createdAt: new Date().toISOString(),
+    };
+    setData(prev => ({ ...prev, gameTimeTransactions: [tx, ...prev.gameTimeTransactions] }));
+  };
+
+  const getUserTimeBalance = (userId: string) =>
+    data.gameTimeTransactions
+      .filter(t => t.userId === userId)
+      .reduce((sum, t) => sum + t.minutes, 0);
+
+  const getUserTimeTransactions = (userId: string) =>
+    data.gameTimeTransactions
+      .filter(t => t.userId === userId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+
+
   return (
     <LMSContext.Provider value={{
       currentUser,
@@ -645,6 +702,11 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       getStudentAttendance,
       toggleMaterialProgress,
       getStudentProgress,
+      gameTimeTransactions: data.gameTimeTransactions,
+      addGameTime,
+      removeGameTime,
+      getUserTimeBalance,
+      getUserTimeTransactions,
     }}>
       {children}
     </LMSContext.Provider>

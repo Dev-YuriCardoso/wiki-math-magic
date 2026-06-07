@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'professor' | 'aluno';
+export type UserRole = 'admin' | 'professor' | 'aluno' | 'vendedor' | 'cliente';
 
 export type FileType = 'pdf' | 'image' | 'video' | 'document' | 'spreadsheet' | 'presentation' | 'archive' | 'audio' | 'other';
 
@@ -83,6 +83,16 @@ export interface MaterialProgress {
   completedAt: string;
 }
 
+export interface GameTimeTransaction {
+  id: string;
+  userId: string; // the customer/player
+  sellerId: string; // who registered the transaction
+  minutes: number; // positive = added, negative = removed
+  amountPaid: number; // value paid for this addition (0 for removals)
+  note?: string;
+  createdAt: string;
+}
+
 export interface LMSData {
   users: User[];
   turmas: Turma[];
@@ -92,6 +102,7 @@ export interface LMSData {
   materialProgress: MaterialProgress[];
   submissions: StudentSubmission[];
   payments: Payment[];
+  gameTimeTransactions: GameTimeTransaction[];
 }
 
 // Helper to detect file type from extension

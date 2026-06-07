@@ -15,7 +15,8 @@ import {
   UserCog,
   Megaphone,
   CalendarCheck,
-  Palette
+  Palette,
+  Gamepad2
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
@@ -39,6 +40,11 @@ const adminNav: NavItem[] = [
   { title: 'Vídeo-aulas', url: '/admin/videos', icon: Video },
   { title: 'Entregas', url: '/admin/entregas', icon: Upload },
   { title: 'Financeiro', url: '/admin/financeiro', icon: CreditCard },
+  { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
+];
+
+const vendedorNav: NavItem[] = [
+  { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
 ];
 
 const professorNav: NavItem[] = [
@@ -66,12 +72,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     ? adminNav 
     : currentUser.role === 'professor' 
       ? professorNav 
-      : alunoNav;
+      : currentUser.role === 'vendedor'
+        ? vendedorNav
+        : alunoNav;
 
-  const roleLabels = {
+  const roleLabels: Record<string, string> = {
     admin: 'Administrador',
     professor: 'Professor',
     aluno: 'Aluno',
+    vendedor: 'Vendedor',
+    cliente: 'Cliente',
   };
 
   return (
