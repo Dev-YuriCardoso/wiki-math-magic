@@ -72,7 +72,7 @@ export interface AttendanceRecord {
   turmaId: string;
   date: string; // Format: "2026-01-15"
   professorId: string;
-  records: { studentId: string; present: boolean }[];
+  records: { studentId: string; present: boolean; note?: string }[];
   createdAt: string;
 }
 
