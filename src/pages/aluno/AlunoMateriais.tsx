@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Video, ExternalLink, Download, Eye } from 'lucide-react';
+import { FileText, Video, Download, Eye } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
