@@ -85,6 +85,15 @@ const initialData: LMSData = {
       createdAt: '2026-01-01T00:00:00.000Z' 
     },
     { 
+      id: 'vendedor-1', 
+      name: 'Vendedor', 
+      email: 'vendas@code.com', 
+      password: 'vendas123',
+      cpf: '000.000.000-02',
+      role: 'vendedor', 
+      createdAt: '2026-01-01T00:00:00.000Z' 
+    },
+    { 
       id: 'prof-1', 
       name: 'Prof. Maria Silva', 
       email: 'maria@codeschool.com', 
