@@ -42,6 +42,8 @@ interface LMSContextType {
   // Attendance
   addAttendanceRecord: (record: Omit<AttendanceRecord, 'id' | 'createdAt'>) => void;
   getAttendanceByTurmaAndDate: (turmaId: string, date: string) => AttendanceRecord | undefined;
+  getAttendanceByTurma: (turmaId: string) => AttendanceRecord[];
+  getStudentAttendance: (studentId: string) => { date: string; present: boolean; note?: string; turmaId: string }[];
   // Progress
   toggleMaterialProgress: (studentId: string, materialId: string) => void;
   getStudentProgress: (studentId: string) => MaterialProgress[];
@@ -533,6 +535,22 @@ export function LMSProvider({ children }: { children: ReactNode }) {
   const getAttendanceByTurmaAndDate = (turmaId: string, date: string) => 
     data.attendanceRecords.find(r => r.turmaId === turmaId && r.date === date);
 
+  const getAttendanceByTurma = (turmaId: string) =>
+    data.attendanceRecords
+      .filter(r => r.turmaId === turmaId)
+      .sort((a, b) => b.date.localeCompare(a.date));
+
+  const getStudentAttendance = (studentId: string) => {
+    const result: { date: string; present: boolean; note?: string; turmaId: string }[] = [];
+    data.attendanceRecords.forEach(r => {
+      const rec = r.records.find(x => x.studentId === studentId);
+      if (rec) {
+        result.push({ date: r.date, present: rec.present, note: rec.note, turmaId: r.turmaId });
+      }
+    });
+    return result.sort((a, b) => b.date.localeCompare(a.date));
+  };
+
   // Progress
   const toggleMaterialProgress = (studentId: string, materialId: string) => {
     const existing = data.materialProgress.find(
@@ -623,6 +641,8 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       deleteAnnouncement,
       addAttendanceRecord,
       getAttendanceByTurmaAndDate,
+      getAttendanceByTurma,
+      getStudentAttendance,
       toggleMaterialProgress,
       getStudentProgress,
     }}>

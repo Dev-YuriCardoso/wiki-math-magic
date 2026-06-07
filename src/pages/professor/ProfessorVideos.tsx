@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Plus, Trash2, Video, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Video, Play } from 'lucide-react';
+import { FilePreviewModal } from '@/components/FilePreviewModal';
+import { Material } from '@/types/lms';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
 import { Button } from '@/components/ui/button';
@@ -37,6 +39,7 @@ export default function ProfessorVideos() {
   const [title, setTitle] = useState('');
   const [turmaId, setTurmaId] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [previewVideo, setPreviewVideo] = useState<Material | null>(null);
 
   if (!currentUser) return null;
 
@@ -163,14 +166,13 @@ export default function ProfessorVideos() {
                     </div>
                   )}
                   <div className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-colors group-hover:bg-foreground/20">
-                    <a
-                      href={video.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setPreviewVideo(video)}
                       className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 transition-all group-hover:opacity-100 hover:scale-110"
                     >
-                      <ExternalLink className="h-6 w-6" />
-                    </a>
+                      <Play className="h-6 w-6" />
+                    </button>
                   </div>
                 </div>
 
@@ -229,6 +231,17 @@ export default function ProfessorVideos() {
           </div>
         )}
       </div>
+
+      {previewVideo && (
+        <FilePreviewModal
+          open={!!previewVideo}
+          onOpenChange={(o) => !o && setPreviewVideo(null)}
+          fileName={previewVideo.title}
+          fileType="video"
+          videoUrl={previewVideo.videoUrl}
+          title={previewVideo.title}
+        />
+      )}
     </MainLayout>
   );
 }
