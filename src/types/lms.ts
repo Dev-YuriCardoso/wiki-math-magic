@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'professor' | 'aluno';
+export type UserRole = 'admin' | 'professor' | 'aluno' | 'vendedor';
 
 export type FileType = 'pdf' | 'image' | 'video' | 'document' | 'spreadsheet' | 'presentation' | 'archive' | 'audio' | 'other';
 
