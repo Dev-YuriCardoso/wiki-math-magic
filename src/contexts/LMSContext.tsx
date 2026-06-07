@@ -42,6 +42,8 @@ interface LMSContextType {
   // Attendance
   addAttendanceRecord: (record: Omit<AttendanceRecord, 'id' | 'createdAt'>) => void;
   getAttendanceByTurmaAndDate: (turmaId: string, date: string) => AttendanceRecord | undefined;
+  getAttendanceByTurma: (turmaId: string) => AttendanceRecord[];
+  getStudentAttendance: (studentId: string) => { date: string; present: boolean; note?: string; turmaId: string }[];
   // Progress
   toggleMaterialProgress: (studentId: string, materialId: string) => void;
   getStudentProgress: (studentId: string) => MaterialProgress[];
