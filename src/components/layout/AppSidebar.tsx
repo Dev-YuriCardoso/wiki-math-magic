@@ -15,7 +15,8 @@ import {
   UserCog,
   Megaphone,
   CalendarCheck,
-  Palette
+  Palette,
+  Gamepad2
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
