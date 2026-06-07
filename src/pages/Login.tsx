@@ -50,6 +50,7 @@ export default function Login() {
       admin: '/admin',
       professor: '/professor',
       aluno: '/aluno',
+      vendedor: '/vendedor',
     };
     navigate(user ? routes[user.role] || '/' : '/');
 
