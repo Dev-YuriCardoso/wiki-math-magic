@@ -72,12 +72,15 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     ? adminNav 
     : currentUser.role === 'professor' 
       ? professorNav 
-      : alunoNav;
+      : currentUser.role === 'vendedor'
+        ? vendedorNav
+        : alunoNav;
 
   const roleLabels = {
     admin: 'Administrador',
     professor: 'Professor',
     aluno: 'Aluno',
+    vendedor: 'Vendedor',
   };
 
   return (
