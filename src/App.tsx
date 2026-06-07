@@ -111,6 +111,9 @@ function AppRoutes() {
       <Route path="/aluno/materiais" element={<ProtectedRoute allowedRoles={['aluno']}><AlunoMateriais /></ProtectedRoute>} />
       <Route path="/aluno/entregas" element={<ProtectedRoute allowedRoles={['aluno']}><AlunoEntregas /></ProtectedRoute>} />
 
+      {/* Vendedor Routes (also accessible by admins) */}
+      <Route path="/vendedor" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorTempo /></ProtectedRoute>} />
+
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
