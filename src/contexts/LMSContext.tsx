@@ -12,7 +12,6 @@ interface LMSContextType {
   announcements: Announcement[];
   attendanceRecords: AttendanceRecord[];
   materialProgress: MaterialProgress[];
-  gameTimeTransactions: GameTimeTransaction[];
   loginByCredentials: (email: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
