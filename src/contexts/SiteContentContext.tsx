@@ -9,12 +9,24 @@ export interface CourseContent {
   description: string;
 }
 
+export type BlogCategory = "portfolio" | "curiosidade" | "video";
+
+export interface BlogItem {
+  id: string;
+  category: BlogCategory;
+  title: string;
+  description: string;
+  image?: string; // Base64 or URL (used for portfolio / curiosidade)
+  videoUrl?: string; // YouTube link (used for video)
+}
+
 export interface SiteContent {
   heroVideoUrl: string;
   heroTitle: string;
   heroDescription: string;
   games: CourseContent;
   design: CourseContent;
+  blog: BlogItem[];
   /** Arbitrary text overrides keyed by a stable id (used by the <T> component) */
   texts: Record<string, string>;
 }
@@ -40,6 +52,45 @@ const defaultContent: SiteContent = {
     description:
       "O aluno domina as ferramentas do mercado criativo, da edição de imagem e vídeo à criação de identidades visuais profissionais.",
   },
+  blog: [
+    {
+      id: "blog-1",
+      category: "portfolio",
+      title: "Jogo 2D feito pela turma",
+      description: "Projeto de plataforma criado pelos alunos no módulo de Construct 3.",
+      image: courseGames,
+    },
+    {
+      id: "blog-2",
+      category: "portfolio",
+      title: "Identidade visual de aluno",
+      description: "Logotipo e identidade visual desenvolvidos no curso de Design Gráfico.",
+      image: courseDesign,
+    },
+    {
+      id: "blog-3",
+      category: "curiosidade",
+      title: "Você sabia? Teoria das cores",
+      description:
+        "Cores complementares criam contraste e chamam atenção — essenciais no design gráfico.",
+      image: courseDesign,
+    },
+    {
+      id: "blog-4",
+      category: "curiosidade",
+      title: "Game design: o loop de gameplay",
+      description:
+        "Bons jogos têm um ciclo de ações recompensadoras que mantêm o jogador engajado.",
+      image: courseGames,
+    },
+    {
+      id: "blog-5",
+      category: "video",
+      title: "Turma em aula prática",
+      description: "Veja um pouco do dia a dia dos alunos durante as aulas.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+  ],
   texts: {},
 };
 
@@ -49,6 +100,9 @@ interface SiteContentContextType {
   updateCourse: (key: "games" | "design", patch: Partial<CourseContent>) => void;
   getText: (id: string, fallback: string) => string;
   setText: (id: string, value: string) => void;
+  addBlogItem: (item: Omit<BlogItem, "id">) => void;
+  updateBlogItem: (id: string, patch: Partial<BlogItem>) => void;
+  removeBlogItem: (id: string) => void;
   resetContent: () => void;
 }
 
@@ -69,6 +123,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           ...parsed,
           games: { ...defaultContent.games, ...(parsed.games || {}) },
           design: { ...defaultContent.design, ...(parsed.design || {}) },
+          blog: Array.isArray(parsed.blog) ? parsed.blog : defaultContent.blog,
           texts: { ...defaultContent.texts, ...(parsed.texts || {}) },
         });
       } catch {
@@ -94,6 +149,24 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const setText = (id: string, value: string) =>
     persist({ ...content, texts: { ...content.texts, [id]: value } });
 
+  const addBlogItem = (item: Omit<BlogItem, "id">) =>
+    persist({
+      ...content,
+      blog: [
+        { ...item, id: `blog-${Math.random().toString(36).slice(2, 9)}` },
+        ...content.blog,
+      ],
+    });
+
+  const updateBlogItem = (id: string, patch: Partial<BlogItem>) =>
+    persist({
+      ...content,
+      blog: content.blog.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+    });
+
+  const removeBlogItem = (id: string) =>
+    persist({ ...content, blog: content.blog.filter((b) => b.id !== id) });
+
   const resetContent = () => {
     localStorage.removeItem(STORAGE_KEY);
     setContent(defaultContent);
@@ -101,7 +174,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   return (
     <SiteContentContext.Provider
-      value={{ content, updateContent, updateCourse, getText, setText, resetContent }}
+      value={{ content, updateContent, updateCourse, getText, setText, addBlogItem, updateBlogItem, removeBlogItem, resetContent }}
     >
       {children}
     </SiteContentContext.Provider>
