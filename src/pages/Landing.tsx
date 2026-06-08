@@ -25,6 +25,10 @@ import {
   Globe,
   CheckCircle2,
   Users,
+  Newspaper,
+  Lightbulb,
+  Trash2,
+  PlusCircle,
 } from "lucide-react";
 
 import { useLMS } from "@/contexts/LMSContext";
