@@ -905,6 +905,7 @@ export default function Landing() {
       <Ferramentas />
       <Modulos />
       <Beneficios />
+      <Blog />
       <Contato />
       <Footer />
     </div>
