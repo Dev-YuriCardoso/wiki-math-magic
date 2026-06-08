@@ -100,6 +100,9 @@ interface SiteContentContextType {
   updateCourse: (key: "games" | "design", patch: Partial<CourseContent>) => void;
   getText: (id: string, fallback: string) => string;
   setText: (id: string, value: string) => void;
+  addBlogItem: (item: Omit<BlogItem, "id">) => void;
+  updateBlogItem: (id: string, patch: Partial<BlogItem>) => void;
+  removeBlogItem: (id: string) => void;
   resetContent: () => void;
 }
 
