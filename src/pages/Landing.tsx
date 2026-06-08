@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 
 import { useLMS } from "@/contexts/LMSContext";
-import { useSiteContent } from "@/contexts/SiteContentContext";
+import { useSiteContent, getYoutubeId, type BlogCategory } from "@/contexts/SiteContentContext";
 import { EditableText, EditableImage, EditableVideo, T } from "@/components/landing/Editable";
 
 /* ------------------------------ Helpers ------------------------------ */
