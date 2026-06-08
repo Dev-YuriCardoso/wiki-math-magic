@@ -123,6 +123,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           ...parsed,
           games: { ...defaultContent.games, ...(parsed.games || {}) },
           design: { ...defaultContent.design, ...(parsed.design || {}) },
+          blog: Array.isArray(parsed.blog) ? parsed.blog : defaultContent.blog,
           texts: { ...defaultContent.texts, ...(parsed.texts || {}) },
         });
       } catch {
