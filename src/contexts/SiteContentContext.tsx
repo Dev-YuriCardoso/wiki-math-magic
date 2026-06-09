@@ -199,6 +199,25 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const removeBlogItem = (id: string) =>
     persist({ ...content, blog: content.blog.filter((b) => b.id !== id) });
 
+  const addGalleryVideo = (item: Omit<GalleryVideo, "id">) =>
+    persist({
+      ...content,
+      gameGallery: [
+        { ...item, id: `gg-${Math.random().toString(36).slice(2, 9)}` },
+        ...content.gameGallery,
+      ],
+    });
+
+  const updateGalleryVideo = (id: string, patch: Partial<GalleryVideo>) =>
+    persist({
+      ...content,
+      gameGallery: content.gameGallery.map((g) => (g.id === id ? { ...g, ...patch } : g)),
+    });
+
+  const removeGalleryVideo = (id: string) =>
+    persist({ ...content, gameGallery: content.gameGallery.filter((g) => g.id !== id) });
+
+
   const resetContent = () => {
     localStorage.removeItem(STORAGE_KEY);
     setContent(defaultContent);
