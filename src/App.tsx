@@ -14,6 +14,7 @@ import Landing from "./pages/Landing";
 import Loja from "./pages/Loja";
 import CursoDesenvolvimentoJogos from "./pages/CursoDesenvolvimentoJogos";
 import CursoDesignGrafico from "./pages/CursoDesignGrafico";
+import GaleriaJogos from "./pages/GaleriaJogos";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
