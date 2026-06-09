@@ -20,6 +20,13 @@ export interface BlogItem {
   videoUrl?: string; // YouTube link (used for video)
 }
 
+export interface GalleryVideo {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string; // YouTube link
+}
+
 export interface SiteContent {
   heroVideoUrl: string;
   heroTitle: string;
@@ -27,6 +34,7 @@ export interface SiteContent {
   games: CourseContent;
   design: CourseContent;
   blog: BlogItem[];
+  gameGallery: GalleryVideo[];
   /** Arbitrary text overrides keyed by a stable id (used by the <T> component) */
   texts: Record<string, string>;
 }
