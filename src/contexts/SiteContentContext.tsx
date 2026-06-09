@@ -20,6 +20,13 @@ export interface BlogItem {
   videoUrl?: string; // YouTube link (used for video)
 }
 
+export interface GalleryVideo {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string; // YouTube link
+}
+
 export interface SiteContent {
   heroVideoUrl: string;
   heroTitle: string;
@@ -27,6 +34,7 @@ export interface SiteContent {
   games: CourseContent;
   design: CourseContent;
   blog: BlogItem[];
+  gameGallery: GalleryVideo[];
   /** Arbitrary text overrides keyed by a stable id (used by the <T> component) */
   texts: Record<string, string>;
 }
@@ -91,6 +99,26 @@ const defaultContent: SiteContent = {
       videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     },
   ],
+  gameGallery: [
+    {
+      id: "gg-1",
+      title: "Jogo de plataforma 2D",
+      description: "Projeto criado pela turma no módulo de Construct 3.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+    {
+      id: "gg-2",
+      title: "Runner infinito",
+      description: "Jogo de corrida sem fim desenvolvido pelos alunos.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+    {
+      id: "gg-3",
+      title: "Top-down shooter",
+      description: "Jogo de tiro com visão de cima feito em aula.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+  ],
   texts: {},
 };
 
@@ -103,6 +131,9 @@ interface SiteContentContextType {
   addBlogItem: (item: Omit<BlogItem, "id">) => void;
   updateBlogItem: (id: string, patch: Partial<BlogItem>) => void;
   removeBlogItem: (id: string) => void;
+  addGalleryVideo: (item: Omit<GalleryVideo, "id">) => void;
+  updateGalleryVideo: (id: string, patch: Partial<GalleryVideo>) => void;
+  removeGalleryVideo: (id: string) => void;
   resetContent: () => void;
 }
 
@@ -124,6 +155,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           games: { ...defaultContent.games, ...(parsed.games || {}) },
           design: { ...defaultContent.design, ...(parsed.design || {}) },
           blog: Array.isArray(parsed.blog) ? parsed.blog : defaultContent.blog,
+          gameGallery: Array.isArray(parsed.gameGallery) ? parsed.gameGallery : defaultContent.gameGallery,
           texts: { ...defaultContent.texts, ...(parsed.texts || {}) },
         });
       } catch {
@@ -167,6 +199,25 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const removeBlogItem = (id: string) =>
     persist({ ...content, blog: content.blog.filter((b) => b.id !== id) });
 
+  const addGalleryVideo = (item: Omit<GalleryVideo, "id">) =>
+    persist({
+      ...content,
+      gameGallery: [
+        { ...item, id: `gg-${Math.random().toString(36).slice(2, 9)}` },
+        ...content.gameGallery,
+      ],
+    });
+
+  const updateGalleryVideo = (id: string, patch: Partial<GalleryVideo>) =>
+    persist({
+      ...content,
+      gameGallery: content.gameGallery.map((g) => (g.id === id ? { ...g, ...patch } : g)),
+    });
+
+  const removeGalleryVideo = (id: string) =>
+    persist({ ...content, gameGallery: content.gameGallery.filter((g) => g.id !== id) });
+
+
   const resetContent = () => {
     localStorage.removeItem(STORAGE_KEY);
     setContent(defaultContent);
@@ -174,7 +225,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   return (
     <SiteContentContext.Provider
-      value={{ content, updateContent, updateCourse, getText, setText, addBlogItem, updateBlogItem, removeBlogItem, resetContent }}
+      value={{ content, updateContent, updateCourse, getText, setText, addBlogItem, updateBlogItem, removeBlogItem, addGalleryVideo, updateGalleryVideo, removeGalleryVideo, resetContent }}
     >
       {children}
     </SiteContentContext.Provider>

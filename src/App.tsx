@@ -14,6 +14,7 @@ import Landing from "./pages/Landing";
 import Loja from "./pages/Loja";
 import CursoDesenvolvimentoJogos from "./pages/CursoDesenvolvimentoJogos";
 import CursoDesignGrafico from "./pages/CursoDesignGrafico";
+import GaleriaJogos from "./pages/GaleriaJogos";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -81,6 +82,8 @@ function AppRoutes() {
       {/* Course Detail Pages */}
       <Route path="/cursos/desenvolvimento-de-jogos" element={<CursoDesenvolvimentoJogos />} />
       <Route path="/cursos/design-grafico" element={<CursoDesignGrafico />} />
+      <Route path="/galeria-jogos" element={<GaleriaJogos />} />
+
 
       {/* Login */}
       <Route
