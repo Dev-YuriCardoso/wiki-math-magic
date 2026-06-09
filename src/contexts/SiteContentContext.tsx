@@ -225,7 +225,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   return (
     <SiteContentContext.Provider
-      value={{ content, updateContent, updateCourse, getText, setText, addBlogItem, updateBlogItem, removeBlogItem, resetContent }}
+      value={{ content, updateContent, updateCourse, getText, setText, addBlogItem, updateBlogItem, removeBlogItem, addGalleryVideo, updateGalleryVideo, removeGalleryVideo, resetContent }}
     >
       {children}
     </SiteContentContext.Provider>
