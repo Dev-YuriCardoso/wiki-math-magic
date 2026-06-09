@@ -131,6 +131,9 @@ interface SiteContentContextType {
   addBlogItem: (item: Omit<BlogItem, "id">) => void;
   updateBlogItem: (id: string, patch: Partial<BlogItem>) => void;
   removeBlogItem: (id: string) => void;
+  addGalleryVideo: (item: Omit<GalleryVideo, "id">) => void;
+  updateGalleryVideo: (id: string, patch: Partial<GalleryVideo>) => void;
+  removeGalleryVideo: (id: string) => void;
   resetContent: () => void;
 }
 
