@@ -99,6 +99,26 @@ const defaultContent: SiteContent = {
       videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     },
   ],
+  gameGallery: [
+    {
+      id: "gg-1",
+      title: "Jogo de plataforma 2D",
+      description: "Projeto criado pela turma no módulo de Construct 3.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+    {
+      id: "gg-2",
+      title: "Runner infinito",
+      description: "Jogo de corrida sem fim desenvolvido pelos alunos.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+    {
+      id: "gg-3",
+      title: "Top-down shooter",
+      description: "Jogo de tiro com visão de cima feito em aula.",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    },
+  ],
   texts: {},
 };
 
