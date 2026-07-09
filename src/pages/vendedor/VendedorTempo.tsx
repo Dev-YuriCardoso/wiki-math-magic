@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Gamepad2, Plus, Minus, Search, UserPlus, Clock, DollarSign, History, X, Play, Pause } from 'lucide-react';
+import { Gamepad2, Plus, Minus, Search, UserPlus, Clock, DollarSign, X, Play, Pause } from 'lucide-react';
 import { toast } from 'sonner';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
