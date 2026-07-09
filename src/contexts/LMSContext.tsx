@@ -54,6 +54,7 @@ interface LMSContextType {
   removeGameTime: (userId: string, minutes: number, note?: string) => void;
   getUserTimeBalance: (userId: string) => number;
   getUserTimeTransactions: (userId: string) => GameTimeTransaction[];
+  importGameTransactions: (txs: GameTimeTransaction[]) => number;
   getGameSession: (userId: string) => GameSession | undefined;
   startGameSession: (userId: string) => void;
   pauseGameSession: (userId: string) => void;
@@ -687,6 +688,22 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       .filter(t => t.userId === userId)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
+  const importGameTransactions = (txs: GameTimeTransaction[]) => {
+    if (!txs.length) return 0;
+    let added = 0;
+    setData(prev => {
+      const existingIds = new Set(prev.gameTimeTransactions.map(t => t.id));
+      const toAdd = txs.filter(t => t.id && !existingIds.has(t.id));
+      added = toAdd.length;
+      if (!toAdd.length) return prev;
+      const merged = [...toAdd, ...prev.gameTimeTransactions].sort((a, b) =>
+        b.createdAt.localeCompare(a.createdAt)
+      );
+      return { ...prev, gameTimeTransactions: merged };
+    });
+    return added;
+  };
+
   const getGameSession = (userId: string) =>
     (data.gameSessions || []).find(s => s.userId === userId);
 
@@ -780,6 +797,7 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       removeGameTime,
       getUserTimeBalance,
       getUserTimeTransactions,
+      importGameTransactions,
       getGameSession,
       startGameSession,
       pauseGameSession,

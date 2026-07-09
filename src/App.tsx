@@ -42,6 +42,7 @@ import AlunoEntregas from "./pages/aluno/AlunoEntregas";
 
 // Vendedor Pages
 import VendedorTempo from "./pages/vendedor/VendedorTempo";
+import VendedorAtivos from "./pages/vendedor/VendedorAtivos";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,7 @@ function AppRoutes() {
 
       {/* Vendedor Routes (also accessible by admins) */}
       <Route path="/vendedor" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorTempo /></ProtectedRoute>} />
+      <Route path="/vendedor/ativos" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorAtivos /></ProtectedRoute>} />
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />

@@ -16,7 +16,8 @@ import {
   Megaphone,
   CalendarCheck,
   Palette,
-  Gamepad2
+  Gamepad2,
+  Timer
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
@@ -41,10 +42,12 @@ const adminNav: NavItem[] = [
   { title: 'Entregas', url: '/admin/entregas', icon: Upload },
   { title: 'Financeiro', url: '/admin/financeiro', icon: CreditCard },
   { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
+  { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
 ];
 
 const vendedorNav: NavItem[] = [
   { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
+  { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
 ];
 
 const professorNav: NavItem[] = [
