@@ -129,6 +129,50 @@ export default function ProfessorChamada() {
   const detailRecords = detailStudentId ? getStudentAttendance(detailStudentId) : [];
   const detailPresent = detailRecords.filter(r => r.present).length;
 
+  // ===== Calendar helpers for history =====
+  const currentTurmaName = turmas.find(t => t.id === selectedTurma)?.name || '';
+  const recordsByDate = new Map(history.map(r => [r.date, r]));
+
+  const monthStart = startOfMonth(historyMonth);
+  const monthEnd = endOfMonth(historyMonth);
+  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const leadingBlanks = getDay(monthStart); // 0 (Sun) - 6 (Sat)
+  const weekDayLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  const selectedRecord = selectedHistoryDate ? recordsByDate.get(selectedHistoryDate) : undefined;
+
+  const exportToExcel = () => {
+    if (history.length === 0) {
+      toast.error('Não há chamadas para exportar.');
+      return;
+    }
+
+    // One row per student per attendance day, organized by month/day
+    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+    const rows = sorted.flatMap(rec => {
+      const d = parseISO(rec.date);
+      return rec.records.map(r => {
+        const student = getUserById(r.studentId);
+        return {
+          'Mês': format(d, 'MMMM yyyy', { locale: ptBR }),
+          'Dia': format(d, 'dd/MM/yyyy'),
+          'Aluno': student?.name || r.studentId,
+          'Presença': r.present ? 'Presente' : 'Ausente',
+          'Observação': r.note || '',
+        };
+      });
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    worksheet['!cols'] = [{ wch: 18 }, { wch: 12 }, { wch: 28 }, { wch: 12 }, { wch: 40 }];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Chamadas');
+    const fileName = `chamadas-${currentTurmaName || 'turma'}.xlsx`.replace(/\s+/g, '-').toLowerCase();
+    XLSX.writeFile(workbook, fileName);
+    toast.success('Histórico exportado para Excel!');
+  };
+
+
   return (
     <MainLayout title="Controle de Presença">
       <Tabs defaultValue="chamada" className="space-y-6">
