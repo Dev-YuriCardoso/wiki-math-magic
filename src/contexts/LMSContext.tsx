@@ -797,6 +797,7 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       removeGameTime,
       getUserTimeBalance,
       getUserTimeTransactions,
+      importGameTransactions,
       getGameSession,
       startGameSession,
       pauseGameSession,
