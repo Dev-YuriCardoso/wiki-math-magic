@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { User, GAME_TIME_PRICE_PER_HOUR, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
+import { LancamentosCalendar } from '@/components/vendedor/LancamentosCalendar';
 
 function formatMinutes(total: number) {
   const sign = total < 0 ? '-' : '';
