@@ -103,6 +103,29 @@ export interface GameSession {
   updatedAt: string;
 }
 
+// Company expense (money going out) for financial control
+export interface Expense {
+  id: string;
+  description: string;
+  category: string; // e.g. Aluguel, Energia, Salários, Equipamento, Outros
+  amount: number; // BRL spent
+  note?: string;
+  createdAt: string; // ISO date of the expense
+  createdBy: string; // who registered it
+}
+
+export const EXPENSE_CATEGORIES = [
+  'Aluguel',
+  'Energia',
+  'Internet',
+  'Salários',
+  'Equipamento',
+  'Manutenção',
+  'Marketing',
+  'Impostos',
+  'Outros',
+] as const;
+
 export interface LMSData {
   users: User[];
   turmas: Turma[];
@@ -114,6 +137,7 @@ export interface LMSData {
   payments: Payment[];
   gameTimeTransactions: GameTimeTransaction[];
   gameSessions: GameSession[];
+  expenses: Expense[];
 }
 
 // Price for lan house game time: R$5 per hour

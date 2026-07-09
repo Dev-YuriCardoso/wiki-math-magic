@@ -17,7 +17,8 @@ import {
   CalendarCheck,
   Palette,
   Gamepad2,
-  Timer
+  Timer,
+  Wallet
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
@@ -43,11 +44,13 @@ const adminNav: NavItem[] = [
   { title: 'Financeiro', url: '/admin/financeiro', icon: CreditCard },
   { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
   { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
+  { title: 'Histórico financeiro', url: '/vendedor/financeiro', icon: Wallet },
 ];
 
 const vendedorNav: NavItem[] = [
   { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
   { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
+  { title: 'Histórico financeiro', url: '/vendedor/financeiro', icon: Wallet },
 ];
 
 const professorNav: NavItem[] = [

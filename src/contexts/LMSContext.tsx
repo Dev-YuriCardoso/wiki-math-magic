@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress, GameTimeTransaction, GameSession, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
+import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress, GameTimeTransaction, GameSession, Expense, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
 
 interface LMSContextType {
   currentUser: User | null;
@@ -58,6 +58,11 @@ interface LMSContextType {
   getGameSession: (userId: string) => GameSession | undefined;
   startGameSession: (userId: string) => void;
   pauseGameSession: (userId: string) => void;
+  // Expenses (company financial control)
+  expenses: Expense[];
+  addExpense: (expense: Omit<Expense, 'id' | 'createdBy'>) => void;
+  deleteExpense: (id: string) => void;
+  importExpenses: (expenses: Expense[]) => number;
 }
 
 const LMSContext = createContext<LMSContextType | undefined>(undefined);
@@ -65,7 +70,7 @@ const LMSContext = createContext<LMSContextType | undefined>(undefined);
 const STORAGE_KEY = 'lms_data';
 const SESSION_KEY = 'lms_session';
 const DATA_VERSION_KEY = 'lms_data_version';
-const CURRENT_DATA_VERSION = 6; // Increment for new features
+const CURRENT_DATA_VERSION = 7; // Increment for new features
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -199,6 +204,7 @@ const initialData: LMSData = {
   materialProgress: [],
   gameTimeTransactions: [],
   gameSessions: [],
+  expenses: [],
 };
 
 export function LMSProvider({ children }: { children: ReactNode }) {
@@ -743,6 +749,34 @@ export function LMSProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  // ===== Expenses =====
+  const addExpense = (expense: Omit<Expense, 'id' | 'createdBy'>) => {
+    const newExpense: Expense = {
+      ...expense,
+      id: generateId(),
+      createdBy: currentUser?.id || 'system',
+    };
+    setData(prev => ({ ...prev, expenses: [newExpense, ...(prev.expenses || [])] }));
+  };
+
+  const deleteExpense = (id: string) => {
+    setData(prev => ({ ...prev, expenses: (prev.expenses || []).filter(e => e.id !== id) }));
+  };
+
+  const importExpenses = (expenses: Expense[]) => {
+    let added = 0;
+    setData(prev => {
+      const existing = prev.expenses || [];
+      const ids = new Set(existing.map(e => e.id));
+      const toAdd = expenses.filter(e => !ids.has(e.id));
+      added = toAdd.length;
+      return { ...prev, expenses: [...toAdd, ...existing] };
+    });
+    return added;
+  };
+
+
+
 
 
 
@@ -801,6 +835,10 @@ export function LMSProvider({ children }: { children: ReactNode }) {
       getGameSession,
       startGameSession,
       pauseGameSession,
+      expenses: data.expenses || [],
+      addExpense,
+      deleteExpense,
+      importExpenses,
     }}>
       {children}
     </LMSContext.Provider>
