@@ -447,6 +447,14 @@ export default function VendedorTempo() {
               <Label>CPF (opcional)</Label>
               <Input value={newCpf} onChange={(e) => setNewCpf(e.target.value)} placeholder="000.000.000-00" />
             </div>
+            <div className="space-y-1">
+              <Label>Telefone (opcional)</Label>
+              <Input value={newPhone} onChange={(e) => setNewPhone(e.target.value)} placeholder="(00) 00000-0000" />
+            </div>
+            <div className="space-y-1">
+              <Label>Endereço (opcional)</Label>
+              <Input value={newAddress} onChange={(e) => setNewAddress(e.target.value)} placeholder="Rua, número, bairro" />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setNewOpen(false)}>
