@@ -378,52 +378,13 @@ export default function VendedorTempo() {
               </div>
 
               {/* History */}
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <h3 className="font-semibold text-foreground flex items-center gap-2 mb-4">
-                  <History className="h-4 w-4 text-primary" /> Histórico de lançamentos
-                </h3>
-                {transactions.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhum lançamento ainda.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {transactions.map((t) => {
-                      const added = t.minutes > 0;
-                      return (
-                        <div
-                          key={t.id}
-                          className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span
-                              className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                                added
-                                  ? 'bg-success/10 text-success'
-                                  : 'bg-destructive/10 text-destructive'
-                              }`}
-                            >
-                              {added ? <Plus className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
-                            </span>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-foreground">
-                                {added ? 'Adicionado' : 'Retirado'} {formatMinutes(t.minutes)}
-                              </p>
-                              <p className="text-xs text-muted-foreground truncate">
-                                {new Date(t.createdAt).toLocaleString('pt-BR')}
-                                {t.note ? ` • ${t.note}` : ''}
-                              </p>
-                            </div>
-                          </div>
-                          {added && t.amountPaid > 0 && (
-                            <span className="text-sm font-semibold text-success whitespace-nowrap">
-                              {formatCurrency(t.amountPaid)}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              <LancamentosCalendar
+                transactions={transactions}
+                playerName={selected.name}
+                onImport={importGameTransactions}
+                currentUserId={currentUser.id}
+                playerId={selected.id}
+              />
             </>
           )}
         </div>
