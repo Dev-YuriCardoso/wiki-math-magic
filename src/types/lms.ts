@@ -8,6 +8,8 @@ export interface User {
   email: string;
   password: string; // Password for login
   cpf?: string; // CPF/ID
+  phone?: string; // Telefone (opcional)
+  address?: string; // Endereço (opcional)
   role: UserRole;
   turmaId?: string; // Only for students (single turma)
   turmaIds?: string[]; // Only for professors (multiple turmas)
