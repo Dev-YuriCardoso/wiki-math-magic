@@ -381,71 +381,144 @@ export default function ProfessorChamada() {
             </div>
           ) : (
             <div className="space-y-6">
-              {history.map(rec => {
-                const present = rec.records.filter(r => r.present).length;
-                const total = rec.records.length;
-                return (
-                  <div key={rec.id} className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-                    {/* Date header (like a spreadsheet title row) */}
-                    <div className="flex items-center justify-between gap-2 flex-wrap bg-muted/60 border-b border-border px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-primary" />
-                        <span className="font-semibold text-foreground capitalize">
-                          {format(parseISO(rec.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+              {/* Toolbar: export */}
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-sm text-muted-foreground">
+                  <strong className="text-foreground">{history.length}</strong> chamada(s) registrada(s)
+                </p>
+                <Button onClick={exportToExcel} variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Baixar Excel
+                </Button>
+              </div>
+
+              {/* Calendar */}
+              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                {/* Month navigation */}
+                <div className="flex items-center justify-between gap-2 bg-muted/60 border-b border-border px-4 py-3">
+                  <Button variant="ghost" size="icon" onClick={() => setHistoryMonth(subMonths(historyMonth, 1))}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="font-semibold text-foreground capitalize">
+                    {format(historyMonth, "MMMM 'de' yyyy", { locale: ptBR })}
+                  </span>
+                  <Button variant="ghost" size="icon" onClick={() => setHistoryMonth(addMonths(historyMonth, 1))}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Weekday header */}
+                <div className="grid grid-cols-7 border-b border-border bg-muted/30 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {weekDayLabels.map(d => (
+                    <span key={d} className="py-2">{d}</span>
+                  ))}
+                </div>
+
+                {/* Days grid */}
+                <div className="grid grid-cols-7">
+                  {Array.from({ length: leadingBlanks }).map((_, i) => (
+                    <div key={`blank-${i}`} className="aspect-square border-b border-r border-border/50" />
+                  ))}
+                  {monthDays.map(day => {
+                    const ds = format(day, 'yyyy-MM-dd');
+                    const rec = recordsByDate.get(ds);
+                    const isSelected = selectedHistoryDate === ds;
+                    const present = rec ? rec.records.filter(r => r.present).length : 0;
+                    return (
+                      <button
+                        key={ds}
+                        type="button"
+                        disabled={!rec}
+                        onClick={() => setSelectedHistoryDate(ds)}
+                        className={`relative aspect-square border-b border-r border-border/50 p-1.5 text-left transition-colors ${
+                          rec ? 'hover:bg-primary/10 cursor-pointer' : 'cursor-default opacity-60'
+                        } ${isSelected ? 'bg-primary/15 ring-1 ring-inset ring-primary' : ''}`}
+                      >
+                        <span className={`text-xs tabular-nums ${rec ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                          {format(day, 'd')}
                         </span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        <strong className="text-success">{present}</strong> presentes ·{' '}
-                        <strong className="text-destructive">{total - present}</strong> ausentes
+                        {rec && (
+                          <div className="mt-1 flex flex-wrap gap-0.5">
+                            <span className="rounded bg-success/15 px-1 text-[10px] font-medium text-success">
+                              {present}P
+                            </span>
+                            <span className="rounded bg-destructive/15 px-1 text-[10px] font-medium text-destructive">
+                              {rec.records.length - present}A
+                            </span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Selected day detail (spreadsheet style) */}
+              {selectedRecord && (
+                <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                  <div className="flex items-center justify-between gap-2 flex-wrap bg-muted/60 border-b border-border px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span className="font-semibold text-foreground capitalize">
+                        {format(parseISO(selectedRecord.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                       </span>
                     </div>
-
-                    {/* Column headers */}
-                    <div className="hidden sm:grid grid-cols-[2.5rem_1fr_8rem_1fr] items-center gap-3 bg-muted/30 border-b border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      <span>#</span>
-                      <span>Aluno</span>
-                      <span className="text-center">Presença</span>
-                      <span>Observação</span>
-                    </div>
-
-                    {/* Rows */}
-                    <div className="divide-y divide-border">
-                      {rec.records.map((r, index) => {
-                        const student = getUserById(r.studentId);
-                        if (!student) return null;
-                        return (
-                          <div
-                            key={r.studentId}
-                            className="grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[2.5rem_1fr_8rem_1fr] items-center gap-3 px-4 py-3"
-                          >
-                            <span className="text-sm tabular-nums text-muted-foreground">
-                              {String(index + 1).padStart(2, '0')}
-                            </span>
-                            <span className="text-sm font-medium text-foreground truncate">{student.name}</span>
-                            <div className="flex justify-end sm:justify-center">
-                              <span
-                                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
-                                  r.present ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-                                }`}
-                              >
-                                {r.present ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                                {r.present ? 'Presente' : 'Ausente'}
-                              </span>
-                            </div>
-                            <p className="col-start-2 sm:col-start-4 text-xs text-muted-foreground italic truncate">
-                              {r.note ? `"${r.note}"` : <span className="opacity-40">—</span>}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      <strong className="text-success">{selectedRecord.records.filter(r => r.present).length}</strong> presentes ·{' '}
+                      <strong className="text-destructive">{selectedRecord.records.filter(r => !r.present).length}</strong> ausentes
+                    </span>
                   </div>
-                );
-              })}
+
+                  <div className="hidden sm:grid grid-cols-[2.5rem_1fr_8rem_1fr] items-center gap-3 bg-muted/30 border-b border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    <span>#</span>
+                    <span>Aluno</span>
+                    <span className="text-center">Presença</span>
+                    <span>Observação</span>
+                  </div>
+
+                  <div className="divide-y divide-border">
+                    {selectedRecord.records.map((r, index) => {
+                      const student = getUserById(r.studentId);
+                      if (!student) return null;
+                      return (
+                        <div
+                          key={r.studentId}
+                          className="grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[2.5rem_1fr_8rem_1fr] items-center gap-3 px-4 py-3"
+                        >
+                          <span className="text-sm tabular-nums text-muted-foreground">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-sm font-medium text-foreground truncate">{student.name}</span>
+                          <div className="flex justify-end sm:justify-center">
+                            <span
+                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+                                r.present ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                              }`}
+                            >
+                              {r.present ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                              {r.present ? 'Presente' : 'Ausente'}
+                            </span>
+                          </div>
+                          <p className="col-start-2 sm:col-start-4 text-xs text-muted-foreground italic truncate">
+                            {r.note ? `"${r.note}"` : <span className="opacity-40">—</span>}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {!selectedRecord && (
+                <p className="text-center text-sm text-muted-foreground py-4">
+                  Selecione um dia destacado no calendário para ver a chamada.
+                </p>
+              )}
             </div>
           )}
         </TabsContent>
       </Tabs>
+
 
       {/* Student attendance detail */}
       <Dialog open={!!detailStudentId} onOpenChange={(o) => !o && setDetailStudentId(null)}>
