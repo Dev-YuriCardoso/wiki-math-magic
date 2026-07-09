@@ -54,6 +54,7 @@ interface LMSContextType {
   removeGameTime: (userId: string, minutes: number, note?: string) => void;
   getUserTimeBalance: (userId: string) => number;
   getUserTimeTransactions: (userId: string) => GameTimeTransaction[];
+  importGameTransactions: (txs: GameTimeTransaction[]) => number;
   getGameSession: (userId: string) => GameSession | undefined;
   startGameSession: (userId: string) => void;
   pauseGameSession: (userId: string) => void;
