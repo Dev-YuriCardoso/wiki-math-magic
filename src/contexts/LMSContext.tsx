@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress, GameTimeTransaction, GameSession, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
+import { User, Turma, Material, StudentSubmission, Payment, LMSData, UserRole, Announcement, AttendanceRecord, MaterialProgress, GameTimeTransaction, GameSession, Expense, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
 
 interface LMSContextType {
   currentUser: User | null;
@@ -58,6 +58,11 @@ interface LMSContextType {
   getGameSession: (userId: string) => GameSession | undefined;
   startGameSession: (userId: string) => void;
   pauseGameSession: (userId: string) => void;
+  // Expenses (company financial control)
+  expenses: Expense[];
+  addExpense: (expense: Omit<Expense, 'id' | 'createdBy'>) => void;
+  deleteExpense: (id: string) => void;
+  importExpenses: (expenses: Expense[]) => number;
 }
 
 const LMSContext = createContext<LMSContextType | undefined>(undefined);
