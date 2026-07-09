@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Gamepad2, Plus, Minus, Search, UserPlus, Clock, DollarSign, History, X } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Gamepad2, Plus, Minus, Search, UserPlus, Clock, DollarSign, History, X, Play, Pause } from 'lucide-react';
 import { toast } from 'sonner';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { User } from '@/types/lms';
+import { User, GAME_TIME_PRICE_PER_HOUR, amountToMinutes, getSessionRemainingSeconds } from '@/types/lms';
 
 function formatMinutes(total: number) {
   const sign = total < 0 ? '-' : '';
@@ -23,6 +23,15 @@ function formatMinutes(total: number) {
   const m = abs % 60;
   if (h > 0) return `${sign}${h}h${m > 0 ? ` ${m}min` : ''}`;
   return `${sign}${m}min`;
+}
+
+function formatClock(totalSeconds: number) {
+  const abs = Math.max(0, Math.floor(totalSeconds));
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const s = abs % 60;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
 }
 
 function formatCurrency(value: number) {
@@ -36,13 +45,22 @@ export default function VendedorTempo() {
     addUser,
     addGameTime,
     removeGameTime,
-    getUserTimeBalance,
     getUserTimeTransactions,
     getUserById,
+    getGameSession,
+    startGameSession,
+    pauseGameSession,
   } = useLMS();
 
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // ticking clock to refresh countdowns every second
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Add time form
   const [addHours, setAddHours] = useState('');
@@ -58,28 +76,50 @@ export default function VendedorTempo() {
   const [newName, setNewName] = useState('');
   const [newCpf, setNewCpf] = useState('');
 
-  // Players pool = students + walk-in clients (alunos are included automatically)
+  // Players pool = students + walk-in clients
   const players = useMemo(
-    () =>
-      users
-        .filter((u) => u.role === 'aluno' || u.role === 'cliente')
-        .sort((a, b) => a.name.localeCompare(b.name)),
+    () => users.filter((u) => u.role === 'aluno' || u.role === 'cliente'),
     [users]
   );
 
+  const remainingFor = (userId: string) => getSessionRemainingSeconds(getGameSession(userId), now);
+  const isRunning = (userId: string) => getGameSession(userId)?.status === 'running';
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return players;
-    return players.filter(
-      (u) => u.name.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q)
+    const list = players.filter(
+      (u) => !q || u.name.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q)
     );
-  }, [players, search]);
+    // Running timers first, ordered by who finishes soonest; then by remaining time
+    return [...list].sort((a, b) => {
+      const ra = isRunning(a.id);
+      const rb = isRunning(b.id);
+      if (ra && rb) return remainingFor(a.id) - remainingFor(b.id);
+      if (ra) return -1;
+      if (rb) return 1;
+      const remA = remainingFor(a.id);
+      const remB = remainingFor(b.id);
+      if (remB !== remA) return remB - remA;
+      return a.name.localeCompare(b.name);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [players, search, now]);
 
   if (!currentUser) return null;
 
   const selected: User | undefined = selectedId ? getUserById(selectedId) : undefined;
-  const balance = selectedId ? getUserTimeBalance(selectedId) : 0;
+  const selectedRemaining = selectedId ? remainingFor(selectedId) : 0;
+  const selectedRunning = selectedId ? isRunning(selectedId) : false;
   const transactions = selectedId ? getUserTimeTransactions(selectedId) : [];
+
+  // preview minutes computed from the amount typed (auto mode)
+  const previewMinutes = useMemo(() => {
+    const manual = (parseInt(addHours) || 0) * 60 + (parseInt(addMinutes) || 0);
+    if (manual > 0) return manual;
+    const value = parseFloat(amountPaid.replace(',', '.'));
+    if (!isNaN(value) && value > 0) return amountToMinutes(value);
+    return 0;
+  }, [addHours, addMinutes, amountPaid]);
 
   const handleCreateCustomer = () => {
     if (!newName.trim()) {
@@ -102,14 +142,16 @@ export default function VendedorTempo() {
 
   const handleAddTime = () => {
     if (!selectedId) return;
-    const mins = (parseInt(addHours) || 0) * 60 + (parseInt(addMinutes) || 0);
+    const value = parseFloat(amountPaid.replace(',', '.'));
+    const manual = (parseInt(addHours) || 0) * 60 + (parseInt(addMinutes) || 0);
+    // Auto mode: only the value is provided -> derive minutes
+    const mins = manual > 0 ? manual : (!isNaN(value) && value > 0 ? amountToMinutes(value) : 0);
     if (mins <= 0) {
-      toast.error('Informe o tempo a adicionar');
+      toast.error('Informe o valor pago ou o tempo a adicionar');
       return;
     }
-    const value = parseFloat(amountPaid.replace(',', '.'));
     if (isNaN(value) || value < 0) {
-      toast.error('Informe o valor pago por essa adição');
+      toast.error('Informe o valor pago');
       return;
     }
     addGameTime(selectedId, mins, value, addNote.trim() || undefined);
@@ -134,7 +176,7 @@ export default function VendedorTempo() {
 
   return (
     <MainLayout title="Lan House — Controle de Tempo">
-      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
         {/* Player list */}
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-3">
@@ -154,12 +196,14 @@ export default function VendedorTempo() {
               className="pl-9"
             />
           </div>
-          <div className="space-y-1 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-1 max-h-[65vh] overflow-y-auto">
             {filtered.length === 0 && (
               <p className="text-sm text-muted-foreground p-3">Nenhum jogador encontrado.</p>
             )}
             {filtered.map((u) => {
-              const bal = getUserTimeBalance(u.id);
+              const remaining = remainingFor(u.id);
+              const running = isRunning(u.id);
+              const ending = running && remaining <= 300; // <=5min warning
               return (
                 <button
                   key={u.id}
@@ -170,16 +214,31 @@ export default function VendedorTempo() {
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-foreground">{u.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{u.role}</p>
+                  <div className="min-w-0 flex items-center gap-2">
+                    <span
+                      className={`h-2 w-2 rounded-full shrink-0 ${
+                        running ? (ending ? 'bg-destructive animate-pulse' : 'bg-success animate-pulse') : 'bg-muted-foreground/40'
+                      }`}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-foreground">{u.name}</p>
+                      <p className="text-xs text-muted-foreground capitalize">
+                        {running ? 'Em andamento' : u.role}
+                      </p>
+                    </div>
                   </div>
                   <span
-                    className={`text-xs font-semibold whitespace-nowrap ${
-                      bal > 0 ? 'text-success' : 'text-muted-foreground'
+                    className={`text-sm font-semibold tabular-nums whitespace-nowrap ${
+                      remaining <= 0
+                        ? 'text-muted-foreground'
+                        : ending
+                        ? 'text-destructive'
+                        : running
+                        ? 'text-success'
+                        : 'text-foreground'
                     }`}
                   >
-                    {formatMinutes(bal)}
+                    {formatClock(remaining)}
                   </span>
                 </button>
               );
@@ -196,16 +255,41 @@ export default function VendedorTempo() {
             </div>
           ) : (
             <>
-              {/* Balance card */}
+              {/* Balance / timer card */}
               <div className="rounded-2xl border border-border bg-card p-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">{selected.name}</p>
-                    <p className="text-3xl font-bold text-foreground flex items-center gap-2">
-                      <Clock className="h-7 w-7 text-primary" />
-                      {formatMinutes(balance)}
+                    <p className={`text-4xl font-bold tabular-nums flex items-center gap-2 ${
+                      selectedRunning
+                        ? selectedRemaining <= 300 ? 'text-destructive' : 'text-success'
+                        : 'text-foreground'
+                    }`}>
+                      <Clock className="h-8 w-8 text-primary" />
+                      {formatClock(selectedRemaining)}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">Tempo disponível</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedRunning ? 'Tempo em andamento' : 'Tempo disponível (pausado)'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {selectedRunning ? (
+                      <Button variant="outline" onClick={() => pauseGameSession(selected.id)}>
+                        <Pause className="h-4 w-4" /> Pausar
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          if (selectedRemaining <= 0) {
+                            toast.error('Sem tempo disponível. Adicione tempo primeiro.');
+                            return;
+                          }
+                          startGameSession(selected.id);
+                        }}
+                      >
+                        <Play className="h-4 w-4" /> Iniciar
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -217,28 +301,10 @@ export default function VendedorTempo() {
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
                     <Plus className="h-4 w-4 text-success" /> Adicionar tempo
                   </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <Label className="text-xs">Horas</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={addHours}
-                        onChange={(e) => setAddHours(e.target.value)}
-                        placeholder="0"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs">Minutos</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={addMinutes}
-                        onChange={(e) => setAddMinutes(e.target.value)}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formatCurrency(GAME_TIME_PRICE_PER_HOUR)} = 1 hora. Informe apenas o valor pago
+                    que o tempo é calculado automaticamente e somado ao existente.
+                  </p>
                   <div className="space-y-1">
                     <Label className="text-xs flex items-center gap-1">
                       <DollarSign className="h-3 w-3" /> Valor pago (R$) *
@@ -250,6 +316,24 @@ export default function VendedorTempo() {
                       inputMode="decimal"
                     />
                   </div>
+                  <details className="text-xs text-muted-foreground">
+                    <summary className="cursor-pointer select-none">Definir tempo manualmente</summary>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Horas</Label>
+                        <Input type="number" min={0} value={addHours} onChange={(e) => setAddHours(e.target.value)} placeholder="0" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Minutos</Label>
+                        <Input type="number" min={0} value={addMinutes} onChange={(e) => setAddMinutes(e.target.value)} placeholder="0" />
+                      </div>
+                    </div>
+                  </details>
+                  {previewMinutes > 0 && (
+                    <p className="text-sm text-success font-medium">
+                      → {formatMinutes(previewMinutes)} serão adicionados
+                    </p>
+                  )}
                   <div className="space-y-1">
                     <Label className="text-xs">Observação (opcional)</Label>
                     <Input
