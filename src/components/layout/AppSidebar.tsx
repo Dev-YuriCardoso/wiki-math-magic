@@ -16,7 +16,8 @@ import {
   Megaphone,
   CalendarCheck,
   Palette,
-  Gamepad2
+  Gamepad2,
+  Timer
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
