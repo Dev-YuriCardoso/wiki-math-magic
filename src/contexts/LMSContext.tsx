@@ -50,7 +50,7 @@ interface LMSContextType {
   // Game time (lan house)
   gameTimeTransactions: GameTimeTransaction[];
   gameSessions: GameSession[];
-  addGameTime: (userId: string, minutes: number, amountPaid: number, note?: string) => void;
+  addGameTime: (userId: string, minutes: number, amountPaid: number, note?: string, opts?: { computerId?: string; paymentMethod?: string; operation?: string }) => void;
   removeGameTime: (userId: string, minutes: number, note?: string) => void;
   getUserTimeBalance: (userId: string) => number;
   getUserTimeTransactions: (userId: string) => GameTimeTransaction[];
@@ -58,6 +58,14 @@ interface LMSContextType {
   getGameSession: (userId: string) => GameSession | undefined;
   startGameSession: (userId: string) => void;
   pauseGameSession: (userId: string) => void;
+  finishGameSession: (userId: string) => void;
+  // Computers (lan house machines)
+  computers: Computer[];
+  addComputer: (name?: string) => void;
+  removeComputer: (id: string) => void;
+  renameComputer: (id: string, name: string) => void;
+  assignComputer: (userId: string, computerId: string | undefined) => void;
+  getSessionByComputer: (computerId: string) => GameSession | undefined;
   // Expenses (company financial control)
   expenses: Expense[];
   addExpense: (expense: Omit<Expense, 'id' | 'createdBy'>) => void;
