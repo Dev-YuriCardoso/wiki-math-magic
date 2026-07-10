@@ -93,6 +93,9 @@ export interface GameTimeTransaction {
   amountPaid: number; // value paid for this addition (0 for removals)
   note?: string;
   createdAt: string;
+  computerId?: string; // computer where the operation happened
+  paymentMethod?: string; // Dinheiro, Pix, Cartão, etc.
+  operation?: string; // human label: "Adição de tempo", "Início", "Finalização"...
 }
 
 export interface GameSession {
@@ -101,7 +104,17 @@ export interface GameSession {
   remainingSeconds: number; // remaining time settled at lastUpdatedAt
   lastStartedAt?: string; // ISO timestamp when the timer was last set to running
   updatedAt: string;
+  computerId?: string; // computer this player is seated at
 }
+
+// A physical computer in the lan house
+export interface Computer {
+  id: string;
+  name: string; // e.g. PC01
+  createdAt: string;
+}
+
+export const PAYMENT_METHODS = ['Dinheiro', 'Pix', 'Cartão de Débito', 'Cartão de Crédito', 'Outro'] as const;
 
 // Company expense (money going out) for financial control
 export interface Expense {
