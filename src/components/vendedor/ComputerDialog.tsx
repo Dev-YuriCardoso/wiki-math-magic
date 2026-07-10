@@ -45,15 +45,16 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
     getUserById,
     assignComputer,
     addGameTime,
+    removeGameTime,
     startGameSession,
     pauseGameSession,
-    finishGameSession,
     getUserTimeTransactions,
     currentUser,
   } = useLMS();
 
   const [assignId, setAssignId] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
+  const [removeMinutes, setRemoveMinutes] = useState('');
   const [payMethod, setPayMethod] = useState<string>('Dinheiro');
   const [tab, setTab] = useState<'controle' | 'historico'>('controle');
 
