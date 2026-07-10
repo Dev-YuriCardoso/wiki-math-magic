@@ -270,6 +270,27 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
                   </Button>
                 </div>
 
+                {/* remove time */}
+                <div className="rounded-2xl border border-border p-4 space-y-3">
+                  <p className="text-sm font-semibold flex items-center gap-2">
+                    <Minus className="h-4 w-4 text-destructive" /> Retirar tempo
+                  </p>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Minutos a retirar
+                    </Label>
+                    <Input
+                      value={removeMinutes}
+                      onChange={(e) => setRemoveMinutes(e.target.value)}
+                      placeholder="0"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <Button variant="destructive" className="w-full" onClick={handleRemoveTime}>
+                    <Minus className="h-4 w-4" /> Retirar tempo
+                  </Button>
+                </div>
+
                 <Button
                   variant="ghost"
                   size="sm"
