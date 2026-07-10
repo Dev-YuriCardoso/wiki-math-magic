@@ -56,6 +56,7 @@ import {
 } from '@/components/ui/select';
 import { useLMS } from '@/contexts/LMSContext';
 import { Expense, EXPENSE_CATEGORIES } from '@/types/lms';
+import { FinancialTable } from '@/components/vendedor/FinancialTable';
 
 function formatCurrency(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
