@@ -204,7 +204,7 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
                 </div>
 
                 {/* quick actions */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {running ? (
                     <Button variant="outline" onClick={() => pauseGameSession(player.id)}>
                       <Pause className="h-4 w-4" /> Pausar
@@ -222,9 +222,6 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
                       <Play className="h-4 w-4" /> Iniciar
                     </Button>
                   )}
-                  <Button variant="destructive" onClick={handleFinish}>
-                    <StopCircle className="h-4 w-4" /> Finalizar
-                  </Button>
                 </div>
 
                 {/* add time */}
