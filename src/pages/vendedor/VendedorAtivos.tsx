@@ -39,6 +39,7 @@ export default function VendedorAtivos() {
 
   const metrics = useLanHouseMetrics(now);
   const [quickAmount, setQuickAmount] = useState<Record<string, string>>({});
+  const [quickRemove, setQuickRemove] = useState<Record<string, string>>({});
 
   const active = useMemo(() => {
     return (gameSessions || [])
