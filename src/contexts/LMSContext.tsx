@@ -213,6 +213,11 @@ const initialData: LMSData = {
   gameTimeTransactions: [],
   gameSessions: [],
   expenses: [],
+  computers: Array.from({ length: 10 }, (_, i) => ({
+    id: `pc-${i + 1}`,
+    name: `PC${String(i + 1).padStart(2, '0')}`,
+    createdAt: '2026-01-01T00:00:00.000Z',
+  })),
 };
 
 export function LMSProvider({ children }: { children: ReactNode }) {
