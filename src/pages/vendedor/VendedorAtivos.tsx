@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Timer, Clock, Play, Pause, StopCircle, Plus, Monitor } from 'lucide-react';
+import { Timer, Clock, Play, Pause, Plus, Minus, Monitor } from 'lucide-react';
 import { toast } from 'sonner';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
