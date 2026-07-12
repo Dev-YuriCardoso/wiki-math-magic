@@ -34,7 +34,7 @@ export default function Login() {
       return;
     }
 
-    const result = loginByCredentials(email, password);
+    const result = await loginByCredentials(email, password);
 
     if (!result.success) {
       setError(result.error || 'Erro ao fazer login');
@@ -42,17 +42,26 @@ export default function Login() {
       return;
     }
 
-    // Determine redirect from in-memory user data (robust, no localStorage re-read)
-    const user = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
-    );
+    // Determine redirect from freshly loaded session role
+    const { data: sess } = await supabase.auth.getSession();
+    const authId = sess.session?.user.id;
+    let role: string | undefined;
+    if (authId) {
+      const { data: roleRow } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authId)
+        .limit(1)
+        .maybeSingle();
+      role = roleRow?.role;
+    }
     const routes: Record<string, string> = {
       admin: '/admin',
       professor: '/professor',
       aluno: '/aluno',
       vendedor: '/vendedor',
     };
-    navigate(user ? routes[user.role] || '/' : '/');
+    navigate(role ? routes[role] || '/' : '/');
 
     setIsLoading(false);
   };
