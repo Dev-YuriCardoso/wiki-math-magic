@@ -185,7 +185,7 @@ export default function Login() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Os dados são salvos localmente no navegador.
+          Os dados são salvos com segurança na nuvem e sincronizados entre dispositivos.
         </p>
       </div>
     </div>
