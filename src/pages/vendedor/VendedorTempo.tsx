@@ -192,6 +192,9 @@ export default function VendedorTempo() {
             <Button size="sm" variant="outline" onClick={() => setNewOpen(true)}>
               <UserPlus className="h-4 w-4" /> Novo cliente
             </Button>
+            <Button size="sm" variant="outline" onClick={handleRecoverClients} disabled={recovering}>
+              <UserPlus className="h-4 w-4" /> {recovering ? 'Recuperando...' : 'Recuperar clientes'}
+            </Button>
             <Button size="sm" variant="outline" onClick={() => setManageOpen(true)}>
               <Settings2 className="h-4 w-4" /> Gerenciar PCs
             </Button>
