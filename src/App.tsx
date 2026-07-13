@@ -4,9 +4,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LMSProvider, useLMS } from "@/contexts/LMSContext";
+import { SiteContentProvider } from "@/contexts/SiteContentContext";
+import { StoreProvider } from "@/contexts/StoreContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 // Pages
 import Login from "./pages/Login";
+import Landing from "./pages/Landing";
+import Loja from "./pages/Loja";
+import CursoDesenvolvimentoJogos from "./pages/CursoDesenvolvimentoJogos";
+import CursoDesignGrafico from "./pages/CursoDesignGrafico";
+import GaleriaJogos from "./pages/GaleriaJogos";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -32,31 +40,57 @@ import AlunoDashboard from "./pages/aluno/AlunoDashboard";
 import AlunoMateriais from "./pages/aluno/AlunoMateriais";
 import AlunoEntregas from "./pages/aluno/AlunoEntregas";
 
+// Vendedor Pages
+import VendedorTempo from "./pages/vendedor/VendedorTempo";
+import VendedorAtivos from "./pages/vendedor/VendedorAtivos";
+import VendedorFinanceiro from "./pages/vendedor/VendedorFinanceiro";
+
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
-  const { currentUser } = useLMS();
-  
+  const { currentUser, isInitialized } = useLMS();
+
+  // Wait for session restoration before deciding to redirect (prevents reload/flash)
+  if (!isInitialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+      </div>
+    );
+  }
+
   if (!currentUser) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
   
   if (!allowedRoles.includes(currentUser.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={`/${currentUser.role}`} replace />;
   }
   
   return <>{children}</>;
 }
 
 function AppRoutes() {
-  const { currentUser } = useLMS();
+  const { currentUser, isInitialized } = useLMS();
 
   return (
     <Routes>
+      {/* Landing Page */}
+      <Route path="/" element={<Landing />} />
+
+      {/* Store */}
+      <Route path="/loja" element={<Loja />} />
+
+      {/* Course Detail Pages */}
+      <Route path="/cursos/desenvolvimento-de-jogos" element={<CursoDesenvolvimentoJogos />} />
+      <Route path="/cursos/design-grafico" element={<CursoDesignGrafico />} />
+      <Route path="/galeria-jogos" element={<GaleriaJogos />} />
+
+
       {/* Login */}
-      <Route 
-        path="/" 
-        element={currentUser ? <Navigate to={`/${currentUser.role}`} replace /> : <Login />} 
+      <Route
+        path="/login"
+        element={isInitialized && currentUser ? <Navigate to={`/${currentUser.role}`} replace /> : <Login />}
       />
 
       {/* Admin Routes */}
@@ -82,6 +116,11 @@ function AppRoutes() {
       <Route path="/aluno/materiais" element={<ProtectedRoute allowedRoles={['aluno']}><AlunoMateriais /></ProtectedRoute>} />
       <Route path="/aluno/entregas" element={<ProtectedRoute allowedRoles={['aluno']}><AlunoEntregas /></ProtectedRoute>} />
 
+      {/* Vendedor Routes (also accessible by admins) */}
+      <Route path="/vendedor" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorTempo /></ProtectedRoute>} />
+      <Route path="/vendedor/ativos" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorAtivos /></ProtectedRoute>} />
+      <Route path="/vendedor/financeiro" element={<ProtectedRoute allowedRoles={['vendedor', 'admin']}><VendedorFinanceiro /></ProtectedRoute>} />
+
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -94,9 +133,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <LMSProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <ThemeProvider>
+          <SiteContentProvider>
+            <StoreProvider>
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </StoreProvider>
+          </SiteContentProvider>
+        </ThemeProvider>
       </LMSProvider>
     </TooltipProvider>
   </QueryClientProvider>

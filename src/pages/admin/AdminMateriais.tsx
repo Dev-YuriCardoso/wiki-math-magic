@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, FileText, Upload, ChevronDown, ChevronRight, Download, Eye } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
+import { getFileTypeFromName } from '@/types/lms';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -67,12 +68,14 @@ export default function AdminMateriais() {
     e.preventDefault();
     if (title && turmaId && fileName) {
       const turma = getTurmaById(turmaId);
+      const fileType = getFileTypeFromName(fileName);
       addMaterial({
         title,
         turmaId,
         professorId: turma?.professorId || '',
-        type: 'pdf',
+        type: fileType === 'video' ? 'video' : fileType === 'pdf' ? 'pdf' : 'file',
         fileName,
+        fileType,
       });
       setTitle('');
       setTurmaId('');

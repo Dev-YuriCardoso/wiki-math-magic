@@ -14,10 +14,15 @@ import {
   Code,
   UserCog,
   Megaphone,
-  CalendarCheck
+  CalendarCheck,
+  Palette,
+  Gamepad2,
+  Timer,
+  Wallet
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLMS } from '@/contexts/LMSContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -37,6 +42,15 @@ const adminNav: NavItem[] = [
   { title: 'Vídeo-aulas', url: '/admin/videos', icon: Video },
   { title: 'Entregas', url: '/admin/entregas', icon: Upload },
   { title: 'Financeiro', url: '/admin/financeiro', icon: CreditCard },
+  { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
+  { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
+  { title: 'Histórico financeiro', url: '/vendedor/financeiro', icon: Wallet },
+];
+
+const vendedorNav: NavItem[] = [
+  { title: 'Lan House (Tempo)', url: '/vendedor', icon: Gamepad2 },
+  { title: 'Tempos em andamento', url: '/vendedor/ativos', icon: Timer },
+  { title: 'Histórico financeiro', url: '/vendedor/financeiro', icon: Wallet },
 ];
 
 const professorNav: NavItem[] = [
@@ -56,6 +70,7 @@ const alunoNav: NavItem[] = [
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { currentUser, logout } = useLMS();
+  const { theme, toggleTheme } = useTheme();
 
   if (!currentUser) return null;
 
@@ -63,12 +78,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     ? adminNav 
     : currentUser.role === 'professor' 
       ? professorNav 
-      : alunoNav;
+      : currentUser.role === 'vendedor'
+        ? vendedorNav
+        : alunoNav;
 
-  const roleLabels = {
+  const roleLabels: Record<string, string> = {
     admin: 'Administrador',
     professor: 'Professor',
     aluno: 'Aluno',
+    vendedor: 'Vendedor',
+    cliente: 'Cliente',
   };
 
   return (
@@ -125,6 +144,17 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </ul>
       </nav>
+
+      {/* Theme toggle */}
+      <div className="px-4 pt-4">
+        <button
+          onClick={toggleTheme}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
+        >
+          <Palette className="h-5 w-5" />
+          {theme === 'cyber' ? 'Tema clássico' : 'Tema cyberpunk'}
+        </button>
+      </div>
 
       {/* Logout */}
       <div className="p-4 border-t border-border">

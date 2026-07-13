@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Video, ExternalLink, Download, Eye } from 'lucide-react';
+import { FileText, Video, Download, Eye } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -130,12 +130,11 @@ export default function AlunoMateriais() {
                   const thumbnail = video.videoUrl ? getYouTubeThumbnail(video.videoUrl) : null;
                   
                   return (
-                    <a
+                    <button
                       key={video.id}
-                      href={video.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:shadow-elevated"
+                      type="button"
+                      onClick={() => setPreviewMaterial(video)}
+                      className="group relative overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition-all duration-300 hover:shadow-elevated"
                     >
                       {/* Thumbnail */}
                       <div className="relative aspect-video bg-muted">
@@ -152,7 +151,7 @@ export default function AlunoMateriais() {
                         )}
                         <div className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-colors group-hover:bg-foreground/20">
                           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:scale-110">
-                            <ExternalLink className="h-6 w-6" />
+                            <Video className="h-6 w-6" />
                           </div>
                         </div>
                       </div>
@@ -166,7 +165,7 @@ export default function AlunoMateriais() {
                           Postado em {new Date(video.uploadedAt).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
-                    </a>
+                    </button>
                   );
                 })}
               </div>

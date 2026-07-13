@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLMS } from '@/contexts/LMSContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Code, Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +35,7 @@ export default function Login() {
       return;
     }
 
-    const result = loginByCredentials(email, password);
+    const result = await loginByCredentials(email, password);
 
     if (!result.success) {
       setError(result.error || 'Erro ao fazer login');
@@ -42,32 +43,37 @@ export default function Login() {
       return;
     }
 
-    // Get user role from localStorage to determine redirect
-    const sessionData = localStorage.getItem('lms_data');
-    if (sessionData) {
-      const data = JSON.parse(sessionData);
-      const user = data.users.find((u: { email: string }) => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
-      
-      if (user) {
-        const routes: Record<string, string> = {
-          admin: '/admin',
-          professor: '/professor',
-          aluno: '/aluno',
-        };
-        navigate(routes[user.role] || '/');
-      }
+    // Determine redirect from freshly loaded session role
+    const { data: sess } = await supabase.auth.getSession();
+    const authId = sess.session?.user.id;
+    let role: string | undefined;
+    if (authId) {
+      const { data: roleRow } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authId)
+        .limit(1)
+        .maybeSingle();
+      role = roleRow?.role;
     }
+    const routes: Record<string, string> = {
+      admin: '/admin',
+      professor: '/professor',
+      aluno: '/aluno',
+      vendedor: '/vendedor',
+    };
+    navigate(role ? routes[role] || '/' : '/');
 
     setIsLoading(false);
   };
 
   // Demo credentials info
   const demoCredentials = [
+    { role: 'Admin Slime Code', email: 'admslimecode@gmail.com', password: 'slimecode@789' },
     { role: 'Admin', email: 'admin@codeschool.com', password: 'admin123' },
     { role: 'Professor', email: 'maria@codeschool.com', password: 'prof123' },
     { role: 'Aluno', email: 'ana@codeschool.com', password: 'aluno123' },
+    { role: 'Vendedor', email: 'vendas@code.com', password: 'vendas123' },
   ];
 
   return (
@@ -181,7 +187,7 @@ export default function Login() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Os dados são salvos localmente no navegador.
+          Os dados são salvos com segurança na nuvem e sincronizados entre dispositivos.
         </p>
       </div>
     </div>
