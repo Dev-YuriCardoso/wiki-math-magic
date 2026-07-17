@@ -57,6 +57,7 @@ import {
 import { useLMS } from '@/contexts/LMSContext';
 import { Expense, EXPENSE_CATEGORIES } from '@/types/lms';
 import { FinancialTable } from '@/components/vendedor/FinancialTable';
+import { UserTimeHistory } from '@/components/vendedor/UserTimeHistory';
 
 function formatCurrency(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -450,6 +451,11 @@ export default function VendedorFinanceiro() {
 
       {/* ===== Professional financial history table ===== */}
       <FinancialTable />
+
+      {/* ===== Per-user time history with search ===== */}
+      <div className="mt-6">
+        <UserTimeHistory />
+      </div>
     </MainLayout>
   );
 }

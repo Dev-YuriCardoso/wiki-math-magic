@@ -10,6 +10,7 @@ export interface User {
   cpf?: string; // CPF/ID
   phone?: string; // Telefone (opcional)
   address?: string; // Endereço (opcional)
+  age?: number; // Idade (opcional)
   role: UserRole;
   turmaId?: string; // Only for students (single turma)
   turmaIds?: string[]; // Only for professors (multiple turmas)
@@ -101,8 +102,10 @@ export interface GameTimeTransaction {
 export interface GameSession {
   userId: string;
   status: 'running' | 'paused';
-  remainingSeconds: number; // remaining time settled at lastUpdatedAt
-  lastStartedAt?: string; // ISO timestamp when the timer was last set to running
+  remainingSeconds: number; // fallback/legacy remaining time settled at lastUpdatedAt
+  totalPurchasedMinutes?: number; // cloud source: tempo_comprado_minutos
+  usedMinutes?: number; // cloud source: tempo_usado_minutos
+  lastStartedAt?: string; // cloud source: timestamp_ultimo_inicio
   updatedAt: string;
   computerId?: string; // computer this player is seated at
 }
@@ -112,6 +115,12 @@ export interface Computer {
   id: string;
   name: string; // e.g. PC01
   createdAt: string;
+  status?: 'livre' | 'ativo' | 'pausado';
+  userId?: string;
+  tempoCompradoMinutos?: number;
+  tempoUsadoMinutos?: number;
+  timestampUltimoInicio?: string;
+  updatedAt?: string;
 }
 
 export const PAYMENT_METHODS = ['Dinheiro', 'Pix', 'Cartão de Débito', 'Cartão de Crédito', 'Outro'] as const;
@@ -170,6 +179,12 @@ export function minutesToAmount(minutes: number): number {
 // Computes live remaining seconds for a session at a given moment
 export function getSessionRemainingSeconds(session: GameSession | undefined, now: number = Date.now()): number {
   if (!session) return 0;
+  if (typeof session.totalPurchasedMinutes === 'number' && typeof session.usedMinutes === 'number') {
+    const elapsed = session.status === 'running' && session.lastStartedAt
+      ? Math.floor((now - new Date(session.lastStartedAt).getTime()) / 1000)
+      : 0;
+    return Math.max(0, (session.totalPurchasedMinutes * 60) - (session.usedMinutes * 60 + elapsed));
+  }
   if (session.status === 'running' && session.lastStartedAt) {
     const elapsed = Math.floor((now - new Date(session.lastStartedAt).getTime()) / 1000);
     return Math.max(0, session.remainingSeconds - elapsed);

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Monitor, UserPlus, X, Plus, Settings2, Trash2, Play, Pause } from 'lucide-react';
+import { Monitor, UserPlus, X, Plus, Settings2, Trash2, Play, Pause, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useLMS } from '@/contexts/LMSContext';
@@ -24,12 +24,13 @@ import { DashboardStats } from '@/components/vendedor/DashboardStats';
 import { TimeBadge } from '@/components/vendedor/TimeBadge';
 import { ComputerDialog } from '@/components/vendedor/ComputerDialog';
 import { useLanHouseMetrics } from '@/hooks/useLanHouseMetrics';
+import { DatabaseExport } from '@/components/vendedor/DatabaseExport';
+import { ClientManagerDialog } from '@/components/vendedor/ClientManagerDialog';
 import { cn } from '@/lib/utils';
 
 export default function VendedorTempo() {
   const {
     currentUser,
-    users,
     computers,
     addUser,
     addComputer,
@@ -37,73 +38,6 @@ export default function VendedorTempo() {
     getSessionByComputer,
     getUserById,
   } = useLMS();
-
-  const [recovering, setRecovering] = useState(false);
-
-  const handleRecoverClients = async () => {
-    setRecovering(true);
-    try {
-      const raw = localStorage.getItem('lms_data');
-      if (!raw) {
-        toast.error('Nenhum dado antigo encontrado neste navegador.');
-        return;
-      }
-      let parsed: any;
-      try {
-        parsed = JSON.parse(raw);
-      } catch {
-        toast.error('Dados antigos corrompidos, não foi possível ler.');
-        return;
-      }
-      const oldClients: any[] = (parsed?.users || []).filter((u: any) => u.role === 'cliente');
-      if (oldClients.length === 0) {
-        toast.error('Nenhum cliente antigo encontrado neste navegador.');
-        return;
-      }
-      const existingKeys = new Set(
-        users
-          .filter((u) => u.role === 'cliente')
-          .map((u) => `${(u.name || '').trim().toLowerCase()}|${(u.cpf || '').trim()}`)
-      );
-      let restored = 0;
-      let skipped = 0;
-      let failed = 0;
-      for (const c of oldClients) {
-        const key = `${(c.name || '').trim().toLowerCase()}|${(c.cpf || '').trim()}`;
-        if (existingKeys.has(key)) {
-          skipped++;
-          continue;
-        }
-        const email = `${(c.name || 'cliente').trim().toLowerCase().replace(/\s+/g, '.')}.${Math.random()
-          .toString(36)
-          .slice(2, 8)}@cliente.local`;
-        const res = await addUser({
-          name: c.name || 'Cliente',
-          email,
-          password: '',
-          cpf: c.cpf || undefined,
-          phone: c.phone || undefined,
-          address: c.address || undefined,
-          role: 'cliente',
-        } as any);
-        if (res?.success) {
-          restored++;
-          existingKeys.add(key);
-        } else {
-          failed++;
-        }
-      }
-      if (restored > 0) {
-        toast.success(`${restored} cliente(s) recuperado(s)${skipped ? `, ${skipped} já existiam` : ''}.`);
-      } else if (skipped > 0 && failed === 0) {
-        toast.info('Todos os clientes antigos já estão cadastrados.');
-      } else {
-        toast.error('Não foi possível recuperar os clientes.');
-      }
-    } finally {
-      setRecovering(false);
-    }
-  };
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -116,12 +50,14 @@ export default function VendedorTempo() {
   const [selectedComputer, setSelectedComputer] = useState<Computer | null>(null);
   const [newOpen, setNewOpen] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
+  const [clientsOpen, setClientsOpen] = useState(false);
 
   // new customer
   const [newName, setNewName] = useState('');
   const [newCpf, setNewCpf] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [newAddress, setNewAddress] = useState('');
+  const [newAge, setNewAge] = useState('');
 
   // Threshold notifications (10 / 5 / 1 min)
   const notified = useRef<Record<string, Set<number>>>({});
@@ -155,6 +91,7 @@ export default function VendedorTempo() {
       return;
     }
     const email = `${newName.trim().toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@cliente.local`;
+    const ageNum = newAge.trim() ? parseInt(newAge.trim(), 10) : undefined;
     addUser({
       name: newName.trim(),
       email,
@@ -162,6 +99,7 @@ export default function VendedorTempo() {
       cpf: newCpf.trim() || undefined,
       phone: newPhone.trim() || undefined,
       address: newAddress.trim() || undefined,
+      age: Number.isFinite(ageNum) ? ageNum : undefined,
       role: 'cliente',
     });
     toast.success('Cliente cadastrado');
@@ -169,15 +107,16 @@ export default function VendedorTempo() {
     setNewCpf('');
     setNewPhone('');
     setNewAddress('');
+    setNewAge('');
     setNewOpen(false);
   };
 
-  if (!currentUser) return null;
-
   const sortedComputers = useMemo(
-    () => [...computers].sort((a, b) => a.name.localeCompare(a.name === b.name ? a.name : b.name, 'pt-BR', { numeric: true })),
+    () => [...computers].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true })),
     [computers]
   );
+
+  if (!currentUser) return null;
 
   return (
     <MainLayout title="Lan House — Painel de Computadores">
@@ -188,16 +127,17 @@ export default function VendedorTempo() {
           <h2 className="font-semibold text-foreground flex items-center gap-2">
             <Monitor className="h-5 w-5 text-primary" /> Computadores
           </h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button size="sm" variant="outline" onClick={() => setNewOpen(true)}>
               <UserPlus className="h-4 w-4" /> Novo cliente
             </Button>
-            <Button size="sm" variant="outline" onClick={handleRecoverClients} disabled={recovering}>
-              <UserPlus className="h-4 w-4" /> {recovering ? 'Recuperando...' : 'Recuperar clientes'}
+            <Button size="sm" variant="outline" onClick={() => setClientsOpen(true)}>
+              <Users className="h-4 w-4" /> Gerenciar clientes
             </Button>
             <Button size="sm" variant="outline" onClick={() => setManageOpen(true)}>
               <Settings2 className="h-4 w-4" /> Gerenciar PCs
             </Button>
+            <DatabaseExport />
           </div>
         </div>
 
@@ -280,6 +220,10 @@ export default function VendedorTempo() {
               <Input value={newPhone} onChange={(e) => setNewPhone(e.target.value)} placeholder="(00) 00000-0000" />
             </div>
             <div className="space-y-1">
+              <Label>Idade (opcional)</Label>
+              <Input value={newAge} onChange={(e) => setNewAge(e.target.value.replace(/\D/g, ''))} placeholder="Ex: 15" inputMode="numeric" maxLength={3} />
+            </div>
+            <div className="space-y-1">
               <Label>Endereço (opcional)</Label>
               <Input value={newAddress} onChange={(e) => setNewAddress(e.target.value)} placeholder="Rua, número, bairro" />
             </div>
@@ -333,6 +277,8 @@ export default function VendedorTempo() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ClientManagerDialog open={clientsOpen} onOpenChange={setClientsOpen} />
     </MainLayout>
   );
 }

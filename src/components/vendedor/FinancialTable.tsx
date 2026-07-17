@@ -6,6 +6,7 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from 'lucide-react';
 import { format, parseISO, isSameDay, subDays, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
 import { toast } from 'sonner';
@@ -41,7 +42,7 @@ type RangeKey = 'today' | 'yesterday' | '7d' | '30d' | 'custom';
 const PAGE_SIZE = 12;
 
 export function FinancialTable() {
-  const { gameTimeTransactions, payments, expenses, computers, getUserById } = useLMS();
+  const { gameTimeTransactions, payments, expenses, computers, getUserById, deleteGameTimeTransaction, deletePayment, deleteExpense } = useLMS();
 
   const [range, setRange] = useState<RangeKey>('today');
   const [customStart, setCustomStart] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -285,12 +286,13 @@ export function FinancialTable() {
               <th className="py-2 pr-3 font-medium text-right">Valor</th>
               <th className="py-2 pr-3 font-medium">Pgto</th>
               <th className="py-2 pr-3 font-medium">Status</th>
+              <th className="py-2 pr-3 font-medium text-right">Ações</th>
             </tr>
           </thead>
           <tbody>
             {pageRows.length === 0 && (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-muted-foreground">
+                <td colSpan={9} className="py-8 text-center text-muted-foreground">
                   Nenhum lançamento no período.
                 </td>
               </tr>
@@ -316,11 +318,33 @@ export function FinancialTable() {
                     {r.status}
                   </span>
                 </td>
+                <td className="py-2 pr-3 text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                    title="Apagar lançamento"
+                    onClick={async () => {
+                      if (!confirm('Apagar este lançamento? Esta ação não pode ser desfeita.')) return;
+                      try {
+                        if (r.id.startsWith('g-')) await deleteGameTimeTransaction(r.id.slice(2));
+                        else if (r.id.startsWith('p-')) deletePayment(r.id.slice(2));
+                        else if (r.id.startsWith('e-')) deleteExpense(r.id.slice(2));
+                        toast.success('Lançamento apagado');
+                      } catch (e) {
+                        toast.error('Não foi possível apagar');
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
 
       {/* pagination */}
       {totalPages > 1 && (

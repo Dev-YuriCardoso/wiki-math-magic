@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useLMS } from '@/contexts/LMSContext';
-import { getSessionRemainingSeconds, minutesToAmount } from '@/types/lms';
+import { getSessionRemainingSeconds } from '@/types/lms';
 import type { DashboardMetrics } from '@/components/vendedor/DashboardStats';
 
 /** Computes live lan house dashboard metrics. `now` forces recompute each tick. */
@@ -11,13 +11,13 @@ export function useLanHouseMetrics(now: number): DashboardMetrics {
     const total = computers.length;
     const occupiedIds = new Set(
       (gameSessions || [])
-        .filter((s) => s.computerId && getSessionRemainingSeconds(s, now) > 0)
+        .filter((s) => s.computerId)
         .map((s) => s.computerId)
     );
     const occupied = [...occupiedIds].filter((id) => computers.some((c) => c.id === id)).length;
     const free = Math.max(0, total - occupied);
     const playersInSession = (gameSessions || []).filter(
-      (s) => getSessionRemainingSeconds(s, now) > 0
+      (s) => s.status === 'running' && getSessionRemainingSeconds(s, now) > 0
     ).length;
 
     const todayKey = new Date().toISOString().slice(0, 10);

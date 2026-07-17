@@ -14,160 +14,82 @@ export type Database = {
   }
   public: {
     Tables: {
-      announcements: {
+      lan_clientes: {
         Row: {
-          author_id: string | null
-          content: string | null
+          address: string | null
+          age: number | null
+          cpf: string | null
           created_at: string
+          email: string | null
           id: string
-          title: string
-          turma_id: string | null
-        }
-        Insert: {
-          author_id?: string | null
-          content?: string | null
-          created_at?: string
-          id?: string
-          title: string
-          turma_id?: string | null
-        }
-        Update: {
-          author_id?: string | null
-          content?: string | null
-          created_at?: string
-          id?: string
-          title?: string
-          turma_id?: string | null
-        }
-        Relationships: []
-      }
-      attendance_records: {
-        Row: {
-          created_at: string
-          date: string
-          id: string
-          professor_id: string | null
-          records: Json
-          turma_id: string
-        }
-        Insert: {
-          created_at?: string
-          date: string
-          id?: string
-          professor_id?: string | null
-          records?: Json
-          turma_id: string
-        }
-        Update: {
-          created_at?: string
-          date?: string
-          id?: string
-          professor_id?: string | null
-          records?: Json
-          turma_id?: string
-        }
-        Relationships: []
-      }
-      blog_posts: {
-        Row: {
-          created_at: string
-          data: Json
-          id: string
+          name: string
+          phone: string | null
+          saldo_minutos: number
           updated_at: string
         }
         Insert: {
+          address?: string | null
+          age?: number | null
+          cpf?: string | null
           created_at?: string
-          data?: Json
-          id?: string
+          email?: string | null
+          id: string
+          name: string
+          phone?: string | null
+          saldo_minutos?: number
           updated_at?: string
         }
         Update: {
+          address?: string | null
+          age?: number | null
+          cpf?: string | null
           created_at?: string
-          data?: Json
+          email?: string | null
           id?: string
+          name?: string
+          phone?: string | null
+          saldo_minutos?: number
           updated_at?: string
         }
         Relationships: []
       }
-      computers: {
+      lan_computers: {
         Row: {
           created_at: string
           id: string
           name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
-          id?: string
+          id: string
           name: string
+          status?: string
+          tempo_comprado_minutos?: number
+          tempo_usado_minutos?: number
+          timestamp_ultimo_inicio?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
-        }
-        Relationships: []
-      }
-      expenses: {
-        Row: {
-          amount: number
-          category: string
-          created_at: string
-          created_by: string | null
-          description: string
-          id: string
-          note: string | null
-        }
-        Insert: {
-          amount?: number
-          category?: string
-          created_at?: string
-          created_by?: string | null
-          description: string
-          id?: string
-          note?: string | null
-        }
-        Update: {
-          amount?: number
-          category?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          id?: string
-          note?: string | null
-        }
-        Relationships: []
-      }
-      game_sessions: {
-        Row: {
-          computer_id: string | null
-          id: string
-          last_started_at: string | null
-          remaining_seconds: number
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          computer_id?: string | null
-          id?: string
-          last_started_at?: string | null
-          remaining_seconds?: number
           status?: string
+          tempo_comprado_minutos?: number
+          tempo_usado_minutos?: number
+          timestamp_ultimo_inicio?: string | null
           updated_at?: string
-          user_id: string
-        }
-        Update: {
-          computer_id?: string | null
-          id?: string
-          last_started_at?: string | null
-          remaining_seconds?: number
-          status?: string
-          updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
-      game_time_transactions: {
+      lan_time_transactions: {
         Row: {
           amount_paid: number
           computer_id: string | null
@@ -184,8 +106,8 @@ export type Database = {
           amount_paid?: number
           computer_id?: string | null
           created_at?: string
-          id?: string
-          minutes?: number
+          id: string
+          minutes: number
           note?: string | null
           operation?: string | null
           payment_method?: string | null
@@ -206,280 +128,200 @@ export type Database = {
         }
         Relationships: []
       }
-      material_progress: {
-        Row: {
-          completed_at: string
-          id: string
-          material_id: string
-          student_id: string
-        }
-        Insert: {
-          completed_at?: string
-          id?: string
-          material_id: string
-          student_id: string
-        }
-        Update: {
-          completed_at?: string
-          id?: string
-          material_id?: string
-          student_id?: string
-        }
-        Relationships: []
-      }
-      materials: {
-        Row: {
-          file_data: string | null
-          file_name: string | null
-          file_type: string | null
-          id: string
-          professor_id: string | null
-          title: string
-          turma_id: string | null
-          type: string
-          uploaded_at: string
-          video_url: string | null
-        }
-        Insert: {
-          file_data?: string | null
-          file_name?: string | null
-          file_type?: string | null
-          id?: string
-          professor_id?: string | null
-          title: string
-          turma_id?: string | null
-          type: string
-          uploaded_at?: string
-          video_url?: string | null
-        }
-        Update: {
-          file_data?: string | null
-          file_name?: string | null
-          file_type?: string | null
-          id?: string
-          professor_id?: string | null
-          title?: string
-          turma_id?: string | null
-          type?: string
-          uploaded_at?: string
-          video_url?: string | null
-        }
-        Relationships: []
-      }
-      payments: {
-        Row: {
-          amount: number
-          id: string
-          month: string
-          paid_at: string | null
-          status: string
-          student_id: string
-        }
-        Insert: {
-          amount?: number
-          id?: string
-          month: string
-          paid_at?: string | null
-          status?: string
-          student_id: string
-        }
-        Update: {
-          amount?: number
-          id?: string
-          month?: string
-          paid_at?: string | null
-          status?: string
-          student_id?: string
-        }
-        Relationships: []
-      }
-      products: {
-        Row: {
-          created_at: string
-          data: Json
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          data?: Json
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          data?: Json
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          address: string | null
-          course_end_date: string | null
-          course_start_date: string | null
-          cpf: string | null
-          created_at: string
-          email: string | null
-          enrollment_date: string | null
-          id: string
-          name: string
-          phone: string | null
-          turma_id: string | null
-          turma_ids: string[] | null
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          course_end_date?: string | null
-          course_start_date?: string | null
-          cpf?: string | null
-          created_at?: string
-          email?: string | null
-          enrollment_date?: string | null
-          id: string
-          name?: string
-          phone?: string | null
-          turma_id?: string | null
-          turma_ids?: string[] | null
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          course_end_date?: string | null
-          course_start_date?: string | null
-          cpf?: string | null
-          created_at?: string
-          email?: string | null
-          enrollment_date?: string | null
-          id?: string
-          name?: string
-          phone?: string | null
-          turma_id?: string | null
-          turma_ids?: string[] | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      site_content: {
-        Row: {
-          id: string
-          key: string
-          updated_at: string
-          value: string | null
-        }
-        Insert: {
-          id?: string
-          key: string
-          updated_at?: string
-          value?: string | null
-        }
-        Update: {
-          id?: string
-          key?: string
-          updated_at?: string
-          value?: string | null
-        }
-        Relationships: []
-      }
-      submissions: {
-        Row: {
-          file_data: string | null
-          file_name: string
-          file_type: string | null
-          id: string
-          status: string
-          student_id: string
-          submitted_at: string
-          turma_id: string | null
-        }
-        Insert: {
-          file_data?: string | null
-          file_name: string
-          file_type?: string | null
-          id?: string
-          status?: string
-          student_id: string
-          submitted_at?: string
-          turma_id?: string | null
-        }
-        Update: {
-          file_data?: string | null
-          file_name?: string
-          file_type?: string | null
-          id?: string
-          status?: string
-          student_id?: string
-          submitted_at?: string
-          turma_id?: string | null
-        }
-        Relationships: []
-      }
-      turmas: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          professor_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          professor_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          professor_id?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
+      lan_computer_add_time: {
+        Args: { _computer_id: string; _minutes: number }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
         }
-        Returns: boolean
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
-      is_admin: { Args: { _user_id: string }; Returns: boolean }
+      lan_computer_assign:
+        | {
+            Args: { _computer_id: string; _user_id: string }
+            Returns: {
+              created_at: string
+              id: string
+              name: string
+              status: string
+              tempo_comprado_minutos: number
+              tempo_usado_minutos: number
+              timestamp_ultimo_inicio: string | null
+              updated_at: string
+              user_id: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "lan_computers"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              _computer_id: string
+              _initial_minutes?: number
+              _user_id: string
+            }
+            Returns: {
+              created_at: string
+              id: string
+              name: string
+              status: string
+              tempo_comprado_minutos: number
+              tempo_usado_minutos: number
+              timestamp_ultimo_inicio: string | null
+              updated_at: string
+              user_id: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "lan_computers"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+      lan_computer_disconnect: {
+        Args: { _computer_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_computer_disconnect_save_saldo: {
+        Args: { _computer_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_computer_heartbeat: {
+        Args: { _computer_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_computer_pause: {
+        Args: { _computer_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_computer_remove_time: {
+        Args: { _computer_id: string; _minutes: number }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_computer_start: {
+        Args: { _computer_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          tempo_comprado_minutos: number
+          tempo_usado_minutos: number
+          timestamp_ultimo_inicio: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lan_computers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      lan_elapsed_minutes: { Args: { _last_started: string }; Returns: number }
     }
     Enums: {
-      app_role: "admin" | "professor" | "aluno" | "vendedor" | "cliente"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -606,8 +448,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "professor", "aluno", "vendedor", "cliente"],
-    },
+    Enums: {},
   },
 } as const

@@ -53,10 +53,12 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
   } = useLMS();
 
   const [assignId, setAssignId] = useState('');
+  const [assignSearch, setAssignSearch] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
   const [removeMinutes, setRemoveMinutes] = useState('');
   const [payMethod, setPayMethod] = useState<string>('Dinheiro');
   const [tab, setTab] = useState<'controle' | 'historico'>('controle');
+
 
   const session = computer ? getSessionByComputer(computer.id) : undefined;
   const player: User | undefined = session ? getUserById(session.userId) : undefined;
@@ -169,27 +171,56 @@ export function ComputerDialog({ computer, now, onClose, onNewCustomer }: Props)
             {!player ? (
               <div className="space-y-3">
                 <Label className="text-xs">Conectar jogador</Label>
-                <div className="flex gap-2">
-                  <Select value={assignId} onValueChange={setAssignId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione um jogador" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availablePlayers.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={handleAssign} disabled={!assignId}>
-                    Conectar
-                  </Button>
+                <Input
+                  value={assignSearch}
+                  onChange={(e) => setAssignSearch(e.target.value)}
+                  placeholder="Buscar por nome, CPF ou telefone…"
+                  autoFocus
+                />
+                <div className="max-h-56 overflow-y-auto rounded-xl border border-border divide-y divide-border">
+                  {(() => {
+                    const q = assignSearch.trim().toLowerCase();
+                    const filtered = availablePlayers.filter((p) => {
+                      if (!q) return true;
+                      return (
+                        p.name.toLowerCase().includes(q) ||
+                        (p.cpf || '').toLowerCase().includes(q) ||
+                        (p.phone || '').toLowerCase().includes(q)
+                      );
+                    });
+                    if (filtered.length === 0) {
+                      return (
+                        <p className="text-xs text-muted-foreground p-3 text-center">
+                          Nenhum jogador encontrado.
+                        </p>
+                      );
+                    }
+                    return filtered.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => setAssignId(p.id)}
+                        className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-muted/60 ${
+                          assignId === p.id ? 'bg-primary/10 text-primary' : ''
+                        }`}
+                      >
+                        <p className="font-medium truncate">{p.name}</p>
+                        {(p.cpf || p.phone) && (
+                          <p className="text-xs text-muted-foreground truncate">
+                            {[p.cpf, p.phone].filter(Boolean).join(' • ')}
+                          </p>
+                        )}
+                      </button>
+                    ));
+                  })()}
                 </div>
+                <Button onClick={handleAssign} disabled={!assignId} className="w-full">
+                  Conectar
+                </Button>
                 <Button variant="outline" size="sm" className="w-full" onClick={onNewCustomer}>
                   <UserPlus className="h-4 w-4" /> Cadastrar novo cliente
                 </Button>
               </div>
+
             ) : (
               <>
                 {/* timer */}
